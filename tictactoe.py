@@ -12,9 +12,9 @@ def showboard():
     print()
 
 def checkvertical(column):
-    if column[0] == column[1] == column[2] == "x":
+    if column.count("x") == 3:
         return 2
-    if column[0] == column[1] == column[2] == "o":
+    if column.count("o") == 3:
         return 3
 
 def checkwin():
@@ -39,6 +39,37 @@ def checkwin():
     if a[2] == b[1] == c[0] == "o":
         return 3
     return 0
+
+def almost3(player):
+    for i in range(3):
+        #vertical
+        if a.count(player) == 2 and a.count("-") == 1:
+            return ("a", a.index("-"))
+        if b.count(player) == 2 and a.count("-") == 1:
+            return ("b", b.index("-"))
+        if c.count(player) == 2 and a.count("-") == 1:
+            return ("c", c.index("-"))
+        #horizontal
+        if a[i] == b[i] == player and c[i] == "-":
+            return ("c", i)
+        if a[i] == c[i] == player and b[i] == "-":
+            return ("b", i)
+        if b[i] == c[i] == player and a[i] == "-":
+            return ("a", i)
+    #diagonal
+    if a[0] == b[1] == player and c[2] == "-":
+        return ("c", 2)
+    if a[0] == c[2] == player and b[1] == "-":
+        return ("b", 1)
+    if b[1] == c[2] == player and a[0] == "-":
+        return ("a", 0)
+    if a[2] == b[1] == player and c[0] == "-":
+        return ("c", 0)
+    if a[2] == c[0] == player and b[1] == "-":
+        return ("b", 1)
+    if b[1] == c[0] == player and a[2] == "-":
+        return ("a", 2)
+    return None
 
 win = 0
 empty = 9
@@ -78,23 +109,40 @@ while win == 0:
         win = 1
         win = checkwin()
         continue
-    empties = []
-    for i in range(3):
-        if a[i] == "-":
-            empties.append(("a", i))
-        if b[i] == "-":
-            empties.append(("b", i))
-        if c[i] == "-":
-            empties.append(("c", i))
-    if empties:
-        col, i = random.choice(empties)
+    if almost3("o") is not None:
+        col, i = almost3("o")
         if col == "a":
             a[i] = "o"
         elif col == "b":
             b[i] = "o"
         else:
             c[i] = "o"
-        empty -= 1
+    elif almost3("x") is not None:
+        col, i = almost3("x")
+        if col == "a":
+            a[i] = "o"
+        elif col == "b":
+            b[i] = "o"
+        else:
+            c[i] = "o"
+    else:
+        empties = []
+        for i in range(3):
+            if a[i] == "-":
+                empties.append(("a", i))
+            if b[i] == "-":
+                empties.append(("b", i))
+            if c[i] == "-":
+                empties.append(("c", i))
+        if empties:
+            col, i = random.choice(empties)
+            if col == "a":
+                a[i] = "o"
+            elif col == "b":
+                b[i] = "o"
+            else:
+                c[i] = "o"
+    empty -= 1
     win = checkwin()
     if empty == 0: 
         win == 1
@@ -108,10 +156,3 @@ elif win == 2:
     print ("You win.")
 else:
     print ("You lose.")
-
-
-    
-
-        
-
-    
