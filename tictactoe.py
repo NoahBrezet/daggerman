@@ -45,9 +45,9 @@ def almost3(player):
         #vertical
         if a.count(player) == 2 and a.count("-") == 1:
             return ("a", a.index("-"))
-        if b.count(player) == 2 and a.count("-") == 1:
+        if b.count(player) == 2 and b.count("-") == 1:
             return ("b", b.index("-"))
-        if c.count(player) == 2 and a.count("-") == 1:
+        if c.count(player) == 2 and c.count("-") == 1:
             return ("c", c.index("-"))
         #horizontal
         if a[i] == b[i] == player and c[i] == "-":
@@ -71,8 +71,13 @@ def almost3(player):
         return ("a", 2)
     return None
 
+def checkfull():
+    for i in range(3):
+        if a[i] == "-" or b[i] == "-" or c[i] == "-":
+            return False
+    return True
+
 win = 0
-empty = 9
 while win == 0:
     done = 0
     showboard()
@@ -86,15 +91,15 @@ while win == 0:
             print("Enter a number from 1 to 3.")
             continue
         if column == "a":
-            if a[row] != "x" or "o":
+            if a[row] == "-":
                 a[row] = "x"
                 done = 1
         elif column == "b":
-            if b[row] != "x" or "o":
+            if b[row] == "-":
                 b[row] = "x"
                 done = 1
         elif column == "c":
-            if c[row] != "x" or "o":
+            if c[row] == "-":
                 c[row] = "x"
                 done = 1
         elif column == "no":
@@ -104,8 +109,7 @@ while win == 0:
     win = checkwin()
     if win != 0:
         continue
-    empty -= 1
-    if empty == 0: 
+    if checkfull(): 
         win = 1
         win = checkwin()
         continue
@@ -142,9 +146,8 @@ while win == 0:
                 b[i] = "o"
             else:
                 c[i] = "o"
-    empty -= 1
     win = checkwin()
-    if empty == 0: 
+    if checkfull(): 
         win == 1
         win = checkwin()
 
