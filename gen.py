@@ -139,9 +139,9 @@ def gen(gen):
                 create_monster(4, 2, 0, 2, "K")
                 create_square(xcentre-1, ycentre+1, "K", 0)
                 create_monster(4, 2, 0, 2, "K")
-                create_square(xcentre+1, ycentre-1, "S", 0)
+                create_square(xcentre+1, ycentre+1, "S", 0)
                 create_monster(2,3,0,1,"S")
-                create_square(xcentre-1, ycentre+1, "S", 0)
+                create_square(xcentre-1, ycentre-1, "S", 0)
                 create_monster(2,3,0,1,"S")
     if gen == 2 or gen == 3:
         if map.lvl == 1:
@@ -218,7 +218,7 @@ def gen(gen):
                 create_monster(4, 2, 0, 2, "K")
                 create_square(xcentre-1, ycentre+1, "K", 0)
                 create_monster(4, 2, 0, 2, "K")
-                create_square(xcentre+1, ycentre-1, "S", 0)
+                create_square(xcentre+1, ycentre+1, "S", 0)
                 create_monster(2,3,0,1,"S")
-                create_square(xcentre-1, ycentre+1, "S", 0)
+                create_square(xcentre-1, ycentre-1, "S", 0)
                 create_monster(2,3,0,1,"S")

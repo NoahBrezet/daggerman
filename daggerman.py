@@ -171,6 +171,7 @@ def attack(dx, dy):
                             extra_slot = "health potion"
                             extra_damage = 0
                             extra_defense = 0
+                return
             elif map.id[n] != "□":
                 action_taken = True
                 print(f"You attack the {map.id[n]}!")
@@ -200,6 +201,7 @@ def attack(dx, dy):
                         max_hp += 5
                         hp = max_hp
                         print(f"Your max HP increased to {max_hp}!")
+                return
             else:
                 return
 
