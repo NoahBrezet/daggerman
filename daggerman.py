@@ -28,6 +28,7 @@ def roll(num_sides):
 
 def board_dict_update():
     global board_dict
+    board_dict.clear()
     for n in range (len(map.id)):
         board_dict[(map.x[n], map.y[n])] = map.id[n]
 
@@ -404,7 +405,9 @@ while True:
                 if board_dict.get((map.x[k]-1, map.y[k]), " ") != "□" and board_dict.get((map.x[k]+1, map.y[k]), " ") != "□" and board_dict.get((map.x[k], map.y[k]-1), " ") != "□" and board_dict.get((map.x[k], map.y[k]+1), " ") != "□":
                     continue
                 moved = False
-                while moved == False:
+                attempts = 0
+                while moved == False and attempts < 8:
+                    attempts += 1
                     roll_dir = roll(4)
                     if roll_dir == 1:
                         move_object(-1, 0)
