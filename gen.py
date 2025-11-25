@@ -217,6 +217,7 @@ def gen(gen):
     map.genID[map.id.index("x")] = 0
     xnow = map.x[map.id.index("x")]
     ynow = map.y[map.id.index("x")]
+    room = random.randint(1,6)
     if gen == 1:
         xcentre = xnow-3
         ycentre = ynow
@@ -247,7 +248,6 @@ def gen(gen):
         Ly.append(ycentre/5)
     if gen == 1 or gen == 4:
         if map.lvl == 1:
-            room = random.randint(1,6)
             if room == 1:
                 emptyT(xcentre,ycentre)
             elif room == 2:
@@ -261,7 +261,6 @@ def gen(gen):
             elif room == 6:
                 central(xcentre, ycentre, "C", "S", "K")
         elif map.lvl == 2:
-            room = random.randint(1,6)
             if room == 1:
                 chestroomH(xcentre, ycentre, "□", "F", gen)
             elif room == 2:
@@ -274,9 +273,21 @@ def gen(gen):
                 chest_allyH(xcentre, ycentre, "L")
             elif room == 6:
                 central(xcentre, ycentre, "F", "□", "□")
+        elif map.lvl == 3:
+            if room == 1:
+                chestroomH(xcentre, ycentre, "F", "F", gen)
+            if room == 2:
+                central(xcentre, ycentre, "T", "□", "□")
+            if room == 3:
+                central(xcentre, ycentre, "□", "O", "□")
+            if room == 4:
+                emptyT(xcentre, ycentre)
+            if room == 5:
+                chest_allyH(xcentre, ycentre, "T")
+            if room == 6:
+                central(xcentre, ycentre, "□", "O", "O")
     if gen == 2 or gen == 3:
         if map.lvl == 1:
-            room = random.randint(1,6)
             if room == 1:
                 emptyT(xcentre,ycentre)
             elif room == 2:
@@ -289,8 +300,7 @@ def gen(gen):
                 chest_allyV(xcentre, ycentre, "□")
             elif room == 6:
                 central(xcentre, ycentre, "C", "S", "K")
-        if map.lvl == 2:
-            room = random.randint(1,6)
+        elif map.lvl == 2:
             if room == 1:
                 chestroomV(xcentre, ycentre, "□", "F", gen)
             elif room == 2:
@@ -303,3 +313,16 @@ def gen(gen):
                 chest_allyV(xcentre, ycentre, "L")
             elif room == 6:
                 central(xcentre, ycentre, "F", "□", "□")
+        elif map.lvl == 3:
+            if room == 1:
+                chestroomV(xcentre, ycentre, "F", "F", gen)
+            if room == 2:
+                central(xcentre, ycentre, "T", "□", "□")
+            if room == 3:
+                central(xcentre, ycentre, "□", "O", "□")
+            if room == 4:
+                emptyT(xcentre, ycentre)
+            if room == 5:
+                chest_allyV(xcentre, ycentre, "T")
+            if room == 6:
+                central(xcentre, ycentre, "□", "O", "O")
