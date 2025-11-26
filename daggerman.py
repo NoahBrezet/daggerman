@@ -181,7 +181,7 @@ def attack(dx, dy):
                             extra_slot = "dash magic scroll"
                             extra_damage = 0
                             extra_defense = 0
-                if map.lvl >= 3:
+                if map.lvl == 3:
                     treasure_roll = roll(50)
                     if treasure_roll <= 10:
                         print("You found a longsword! (Damage 1d8)")
@@ -217,14 +217,66 @@ def attack(dx, dy):
                             extra_damage = 0
                             extra_defense = 0
                     elif treasure_roll == 49:
-                        print("You found a greatsword! (Damage 1d10)")
+                        print("You found a greatsword! (Damage 1d12)")
                         if equip() == "y":
                             weapon = "greatsword"
-                            weapon_damage = 10
+                            weapon_damage = 12
                     elif treasure_roll == 50:
                         print("You found a heal 4 magic scroll! (heal 4 hp when casted)")
                         if equip() == "y":
                             extra_slot = "heal 4 magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                elif map.lvl >= 4:
+                    treasure_roll = roll(50)
+                    if treasure_roll <= 8:
+                        print("You found a greatsword! (Damage 1d12)")
+                        if equip() == "y":
+                            weapon = "greatsword"
+                            weapon_damage = 12
+                    elif treasure_roll <= 16:
+                        print("You found a plate armor! (Defense +3)")
+                        if equip() == "y":
+                            armor = "plate armor"
+                            armor_defense = 3
+                    elif treasure_roll <= 22:
+                        print("You found a swift dagger! (Damage 1d8, use q for swift attack)")
+                        if equip() == "y":
+                            weapon = "swift dagger"
+                            weapon_damage = 8
+                    elif treasure_roll <= 28:
+                        print("You found a dash dagger! (Damage 1d8, use q for dash attack)")
+                        if equip() == "y":
+                            weapon = "dash dagger"
+                            weapon_damage = 8
+                    elif treasure_roll <= 34:
+                        print("You found a power ring! (Damage, defense +2)")
+                        if equip() == "y":
+                            extra_slot = "power ring 2"
+                            extra_damage = 2
+                            extra_defense = 2
+                    elif treasure_roll <= 39:
+                        print ("You found a health potion! (Restores hp to max when used)")
+                        if equip() == "y":
+                            extra_slot = "health potion"
+                            extra_damage = 0
+                            extra_defense = 0
+                    elif treasure_roll <= 44:
+                        print("You found a heal 4 magic scroll! (heal 6 hp when casted)")
+                        if equip() == "y":
+                            extra_slot = "heal 4 magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 47:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        if equip() == "y":
+                            extra_slot = "magic missile magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 50:
+                        print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
+                        if equip() == "y":
+                            extra_slot = "dagger transmutation magic scroll"
                             extra_defense = 0
                             extra_damage = 0
                 return
@@ -252,7 +304,7 @@ def attack(dx, dy):
                     map.Mexp.pop(monster_index)
                     map.Mid.pop(monster_index)
                     map.MplaceID.pop(monster_index)
-                    if exp >= map.lvl * 10:
+                    if exp >= (2*map.lvl-1) * 10:
                         exp -= map.lvl * 10
                         map.lvl += 1
                         print(f"You leveled up! You are now level {map.lvl}!")
@@ -286,7 +338,7 @@ while True:
     print("choose an action: ")
     action = input()
     if action == "i":
-        print(f"HP: {hp}/{max_hp}, EXP: {exp}, Level: {map.lvl}, Exp to next level: {map.lvl * 10- exp}")
+        print(f"HP: {hp}/{max_hp}, EXP: {exp}, Level: {map.lvl}, Exp to next level: {(2*map.lvl-1) * 10 - exp}")
         print(f"Weapon: {weapon} (Damage: 1d{weapon_damage})")
         print(f"Armor: {armor} (Defense: {armor_defense})")
         print(f"Extra Slot: {extra_slot}")
@@ -323,12 +375,16 @@ while True:
         print("S - slime (HP: 2, Damage: 1d3) slimes can't move") #exp 1
         if map.lvl >= 2:
             print("level 2 monsters:")
-            print("L - Lizardman (HP: 10, Damage: 1d3, defense: 1)") #exp 4
+            print("L - Lizardman (HP: 10, Damage: 1d3, Defense: 1)") #exp 4
             print("F - Freakish Abberation (HP: 6, Damage: 1d6)") #exp 3
             if map.lvl >= 3:
                 print("level 3 monsters:")
-                print("O - Orc (HP: 10, Damage: 1d8, defense: 2)") #exp 6
-                print("T - Troll (HP: 16, Damage: 1d6, defense: 3)") #exp 7
+                print("O - Orc (HP: 10, Damage: 1d8, Defense: 2)") #exp 6
+                print("T - Troll (HP: 16, Damage: 1d6, Defense: 3)") #exp 7
+                if map.lvl >= 4:
+                    print("level 4 monsters:")
+                    print("G - Golem (HP: 10, Damage: 1d6, Defense: 4)") #exp 7
+                    print("Ø - Ogre (HP: 20, Damage: 1d10, Defense: 2)") #exp 12
     elif action == "aa":
         attack(-1, 0)
     elif action == "dd":
@@ -349,6 +405,26 @@ while True:
             attack(-1, 0)
             attack(1, 0)
             attack(0, 1)
+        elif weapon == "dash dagger":
+            print("You can move and attack after!")
+            move_input = input("Move (w/a/s/d): ")
+            if move_input == "a":
+                move(-1, 0)
+            elif move_input == "d":
+                move(1, 0)
+            elif move_input == "w":
+                move(0, -1)
+            elif move_input == "s":
+                move(0, 1)
+            attack_input = input("Attack (w/a/s/d):")
+            if attack_input == "a":
+                attack(-1, 0)
+            elif attack_input == "d":
+                attack(1, 0)
+            elif attack_input == "w":
+                attack(0, -1)
+            elif attack_input == "s":
+                attack(0, 1)
     elif action == "e":
         if extra_slot == "heal 2 magic scroll":
             hp += 2
@@ -363,7 +439,7 @@ while True:
             print("You cast the heal spell and restored 4 HP!")
             action_taken = True
         elif extra_slot == "dash magic scroll":
-            print("you can move twice this turn!")
+            print("You can move twice this turn!")
             move_input1 = input("First move (w/a/s/d): ")
             if move_input1 == "a":
                 move(-1, 0)
@@ -383,6 +459,40 @@ while True:
                 move(0, -1)
             elif move_input2 == "s":
                 move(0, 1)
+        elif extra_slot == "dagger transmutation magic scroll":
+            print("This spell does not take a turn.")
+            if weapon == "swift dagger":
+                print("You now have a dash dagger!")
+                weapon = "dash dagger"
+            elif weapon.endswith("dagger"):
+                print("You now have a swift dagger!")
+                weapon = "swift dagger"
+        elif extra_slot == "magic missile magic scroll":
+            print("You do 1d4+2 damage.")
+            print("In wich direction do you want to attack? (w/a/s/d)")
+            attack_input = input()
+            extra_damage_save = extra_damage
+            damage_save = weapon_damage
+            extra_damage = 2
+            weapon_damage = 4
+            if attack_input == "a":
+                attack(-1, 0)
+                attack(-2, 0)
+                attack(-3, 0)
+            elif attack_input == "d":
+                attack(1, 0)
+                attack(2, 0)
+                attack(3, 0)
+            elif attack_input == "w":
+                attack(0, -1)
+                attack(0, -2)
+                attack(0 ,-3)
+            elif attack_input == "s":
+                attack(0, 1)
+                attack(0 ,2)
+                attack(0, 3)
+            extra_damage = extra_damage_save
+            weapon_damage = damage_save
     if action_taken:
         k = map.id.index("x")
         for m in range(len(map.Mid)):

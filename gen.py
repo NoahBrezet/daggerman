@@ -35,6 +35,10 @@ def create_mon(new_id):
             create_monster(10, 8, 2, 6, "O")
         elif new_id == "T":
             create_monster(16, 6, 3, 7, "T")
+        elif new_id == "G":
+            create_monster(10, 6, 4, 7, "G")
+        elif new_id == "Ø":
+            create_monster(20, 10, 2, 12, "Ø")
 
 def create_monster(new_hp, new_damage, new_defense, new_exp, new_id):
     map.Mhp.append(new_hp)
@@ -87,10 +91,10 @@ def chest_allyH(xc, yc, M):
 
 def chest_allyV(xc, yc, M):
     create_square(xc, yc, "□", 0)
-    create_square(xc+1, yc, M, 0)
+    create_square(xc, yc+1, M, 0)
     create_mon(M)
-    create_square(xc, yc+1, "C", 0)
-    create_square(xc-1, yc, M, 0)
+    create_square(xc-1, yc, "C", 0)
+    create_square(xc, yc-1, M, 0)
     create_mon(M)
     create_square(xc, yc+2, "□", 3)
     create_square(xc, yc-2, "□", 2)
@@ -286,6 +290,19 @@ def gen(gen):
                 chest_allyH(xcentre, ycentre, "T")
             if room == 6:
                 central(xcentre, ycentre, "□", "O", "O")
+        elif map.lvl >= 4:
+            if room == 1:
+                emptyT(xcentre, ycentre)
+            if room == 2:
+                chest_allyH(xcentre, ycentre, "G")
+            if room == 3:
+                chestroomH(xcentre, ycentre, "□", "G", gen)
+            if room == 4:
+                central(xcentre, ycentre, "Ø", "O", "□")
+            if room == 5:
+                central(xcentre, ycentre, "□", "T", "□")
+            if room == 6:
+                central(xcentre, ycentre, "O", "O", "O")
     if gen == 2 or gen == 3:
         if map.lvl == 1:
             if room == 1:
@@ -326,3 +343,16 @@ def gen(gen):
                 chest_allyV(xcentre, ycentre, "T")
             if room == 6:
                 central(xcentre, ycentre, "□", "O", "O")
+        elif map.lvl >= 4:
+            if room == 1:
+                emptyT(xcentre, ycentre)
+            if room == 2:
+                chest_allyH(xcentre, ycentre, "G")
+            if room == 3:
+                chestroomH(xcentre, ycentre, "□", "G", gen)
+            if room == 4:
+                central(xcentre, ycentre, "Ø", "O", "□")
+            if room == 5:
+                central(xcentre, ycentre, "□", "T", "□")
+            if room == 6:
+                central(xcentre, ycentre, "O", "O", "O")
