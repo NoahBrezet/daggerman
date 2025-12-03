@@ -96,7 +96,7 @@ def monster_defeat(monsterID):
     map.Mexp.pop(monsterID)
     map.Mid.pop(monsterID)
     map.MplaceID.pop(monsterID)
-    if exp >= (map.lvl**2+map.lvl)/2 * 10:
+    if exp >= (map.lvl**2+map.lvl)/2 * 10 and map.lvl != 5 and map.lvl != 8:
         exp -= (map.lvl**2+map.lvl)/2 * 10
         map.lvl += 1
         print(f"You leveled up! You are now level {map.lvl}!")
@@ -515,11 +515,13 @@ while True:
                         print("S - strong slime (HP: 2, Damage: 1d6, Defense: 5)") #exp 12
                         if map.lvl >= 6:
                             print("level 6 monsters:")
-                            print("B - Giant Beetle (HP: 20, Damage: 1d10, Defense: 8)") #exp 16
-                            print("Þ - Troll riding Giant Beetle (HP: 36, Damage: 1d12, Defense: 8)") #exp 30
+                            print("B - Giant Beetle (HP: 10, Damage: 1d10, Defense: 8)") #exp 16
+                            print("Þ - Troll riding Giant Beetle (HP: 26, Damage: 1d12, Defense: 8)") #exp 30
                             print("T - Strong Trolls (HP: 16, Damage: 1d12, Defense: 4)") #exp 12
                             if map.lvl >= 7:
                                 print("level 7 monsters:")
+                                print("E - purple worm egg (HP: 15, Damage: 1d16, Defense: 8)") #exp 20
+                                print("W - giant acid worm (HP: 30, Damage: 1d20, Defense: 6)") #exp 40
                                 if map.lvl >= 8:
                                     print("level 8 monsters:")
                                     print("P - Purple worm (HP: , Damage: 1d, Defense: )")
@@ -668,7 +670,7 @@ while True:
                 if hp <= 0:
                     print("GAME OVER")
                     exit()
-            elif map.Mid[m] == "S":
+            elif map.Mid[m] == "S" or map.Mid[m] == "E":
                 continue
             else:
                 board_dict_update()

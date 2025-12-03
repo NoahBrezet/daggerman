@@ -51,9 +51,13 @@ def create_mon(new_id):
         elif new_id == "Ŧ":
             create_monster(50, 12, 4, 0, "Ŧ")
         elif new_id == "B":
-            create_monster(20, 10, 8, 16, "B")
+            create_monster(10, 10, 8, 16, "B")
         elif new_id == "Þ":
-            create_monster(36, 12, 8, 30, "Þ")
+            create_monster(26, 12, 8, 30, "Þ")
+        elif new_id == "E":
+            create_monster(10, 10, 12, 20, "E")
+        elif new_id == "W":
+            create_monster(30, 20, 6, 40, "W")
 
 def create_monster(new_hp, new_damage, new_defense, new_exp, new_id):
     map.Mhp.append(new_hp)
@@ -358,14 +362,22 @@ def gen(gen):
                 continue
             place, newid = res
             if newid == "□":
-                # stats voor 'strong slime' — pas aan naar wens
-                map.Mhp.append(2)
-                map.Mdamage.append(6)
-                map.Mdefense.append(4)
-                map.Mexp.append(1)
-                map.Mid.append("S")
-                map.MplaceID.append(place)
-                map.id[place] = "S"
+                if map.lvl <= 6:
+                    map.Mhp.append(2)
+                    map.Mdamage.append(6)
+                    map.Mdefense.append(4)
+                    map.Mexp.append(1)
+                    map.Mid.append("S")
+                    map.MplaceID.append(place)
+                    map.id[place] = "S"
+                else:
+                    map.Mhp.append(10)
+                    map.Mdamage.append(10)
+                    map.Mdefense.append(12)
+                    map.Mexp.append(20)
+                    map.Mid.append("E")
+                    map.MplaceID.append(place)
+                    map.id[place] = "E"
         return
     if map.lvl == 1:
         if room == 1:
@@ -421,16 +433,29 @@ def gen(gen):
             central(xcentre, ycentre, "O", "O", "O")
     elif map.lvl == 5:
         bosscave(xcentre, ycentre, "Ŧ", "T", gen)
-    elif map.lvl >= 6:
+    elif map.lvl == 6:
         if room == 1:
             emptyT(xcentre, ycentre)
         if room == 2:
             chest_ally(xcentre, ycentre, "T", gen)
         if room == 3:
+            chestroom(xcentre, ycentre, "Þ", "□", gen)
+        if room == 4:
+            central(xcentre, ycentre, "B", "□", "□")
+        if room == 5:
+            central(xcentre, ycentre, "B", "B", "□")
+        if room == 6:
+            bosscave(xcentre, ycentre, "Þ", "T", gen)
+    elif map.lvl >= 7:
+        if room == 1:
+            emptyT(xcentre, ycentre)
+        if room == 2:
+            chest_ally(xcentre, ycentre, "W", gen)
+        if room == 3:
             chestroom(xcentre, ycentre, "Þ", "T", gen)
         if room == 4:
-            central(xcentre, ycentre, "B", "B", "□")
+            central(xcentre, ycentre, "E", "W", "□")
         if room == 5:
             central(xcentre, ycentre, "B", "B", "B")
         if room == 6:
-            bosscave(xcentre, ycentre, "Þ", "T", gen)
+            bosscave(xcentre, ycentre, "W", "Þ", gen)
