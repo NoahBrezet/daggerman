@@ -5,6 +5,12 @@ import random
 Lx = []
 Ly = []
 
+def get_square_at(xin, yin):
+    for i, (xx, yy) in enumerate(zip(map.x, map.y)):
+        if xx == xin and yy == yin:
+            return i, map.id[i]
+    return None
+
 def create_square(new_x, new_y, new_id, new_genID):
     map.x.append(new_x)
     map.y.append(new_y)
@@ -34,11 +40,20 @@ def create_mon(new_id):
         elif new_id == "O":
             create_monster(10, 8, 2, 6, "O")
         elif new_id == "T":
-            create_monster(16, 6, 3, 7, "T")
+            if map.lvl < 6:
+                create_monster(16, 6, 3, 7, "T")
+            else:
+                create_monster(16, 12, 4, 12, "T")
         elif new_id == "G":
             create_monster(10, 6, 4, 7, "G")
         elif new_id == "Ø":
             create_monster(20, 10, 2, 12, "Ø")
+        elif new_id == "Ŧ":
+            create_monster(50, 12, 4, 0, "Ŧ")
+        elif new_id == "B":
+            create_monster(20, 10, 8, 16, "B")
+        elif new_id == "Þ":
+            create_monster(36, 12, 8, 30, "Þ")
 
 def create_monster(new_hp, new_damage, new_defense, new_exp, new_id):
     map.Mhp.append(new_hp)
@@ -211,6 +226,98 @@ def chestroom(xc, yc, M1, M2, gen):
         create_square(xc-1, yc2+2, "C", 0)
         create_square(xc+1, yc2+2, "□", 0)
 
+def bosscave(xc, yc, MBoss, M, gen):
+    able = False
+    if gen == 1 or gen == 2:
+        xc2 = xc-5
+        yc2 = yc-5
+        if (xc2/5, yc2/5) not in zip(Lx, Ly) and (xc2/5, yc/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+            Lx.append(xc2/5)
+            Ly.append(yc2/5)
+    if gen == 3 or gen == 4:
+        xc = xc+5
+        yc = yc+5
+        xc2 = xc-5
+        yc2 = yc-5
+        if (xc/5, yc/5) not in zip(Lx, Ly) and (xc2/5, yc/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+            Lx.append(xc/5)
+            Ly.append(yc/5)
+    if able == True:
+        create_square(xc, yc, "□", 5)
+        create_square(xc, yc+1, "□", 0)
+        create_square(xc, yc-1, "□", 0)
+        create_square(xc, yc+2, "□", 3)
+        create_square(xc, yc-2, "□", 0)
+        create_square(xc+1, yc, "□", 0)
+        create_square(xc-1, yc, "□", 0)
+        create_square(xc+2, yc, "□", 4)
+        create_square(xc-2, yc, M, 0)
+        create_mon(M)
+        create_square(xc-1, yc-1, "□", 0)
+        create_square(xc-1, yc+1, "□", 0)
+        create_square(xc+1, yc-1, "□", 0)
+        create_square(xc+1, yc+1, "□", 0)
+        create_square(xc-2, yc-1, "□", 0)
+        create_square(xc-2, yc+1, "□", 0)
+        create_square(xc-1, yc-2, "□", 0)
+        create_square(xc2, yc2, "□", 5)
+        create_square(xc2, yc2+1, "□", 0)
+        create_square(xc2, yc2-1, "□", 0)
+        create_square(xc2, yc2+2, "□", 0)
+        create_square(xc2, yc2-2, "□", 2)
+        create_square(xc2+1, yc2, "□", 0)
+        create_square(xc2-1, yc2, "□", 0)
+        create_square(xc2+2, yc2, "□", 0)
+        create_square(xc2-2, yc2, "□", 1)
+        create_square(xc2-1, yc2-1, "□", 0)
+        create_square(xc2+1, yc2-1, "□", 0)
+        create_square(xc2+1, yc2+1, "□", 0)
+        create_square(xc2+2, yc2+1, "□", 0)
+        create_square(xc2+1, yc2+2, "□", 0)
+        create_square(xc2+2, yc2+2, "□", 0)
+        create_square(xc2+1, yc, M, 0)
+        create_mon(M)
+        create_square(xc2+2, yc, "□", 0)
+        create_square(xc2+2, yc+1, "□", 0)
+        create_square(xc2, yc-1, "□", 0)
+        create_square(xc2, yc-2, "□", 0)
+        create_square(xc2+1, yc-2, M, 0)
+        create_mon(M)
+        create_square(xc2+2, yc-2, "□", 0)
+        create_square(xc2+1, yc-1, "□", 0)
+        create_square(xc2+2, yc-1, MBoss, 0)
+        create_mon(MBoss)
+        create_square(xc, yc2, "□", 5)
+        create_square(xc+1, yc2, "□", 0)
+        create_square(xc-1, yc2, "□", 0)
+        create_square(xc-2, yc2, "□", 0)
+        create_square(xc, yc2-1, "□", 0)
+        create_square(xc, yc2+1, "□", 0)
+        create_square(xc, yc2+2, M, 0)
+        create_mon(M)
+        create_square(xc-1, yc2-1, "□", 0)
+        create_square(xc-1, yc2+1, "□", 0)
+        create_square(xc+1, yc2+1, "□", 0)
+        create_square(xc+1, yc2-1, "C", 0)
+        create_square(xc-2, yc2+1, M, 0)
+        create_mon(M)
+        create_square(xc+1, yc2+2, "□", 0)
+    else:
+        if gen == 1 or gen == 2:
+            emptyT(xc,yc)
+        else:
+            emptyT(xc2,yc)
+
 def gen(gen):
     map.genID[map.id.index("x")] = 0
     xnow = map.x[map.id.index("x")]
@@ -244,6 +351,22 @@ def gen(gen):
             return
         Lx.append(xcentre/5)
         Ly.append(ycentre/5)
+    elif gen == 5:
+        for dx, dy in ((1, 0), (-1, 0), (0, -1), (0, 1)):
+            res = get_square_at(xnow + dx, ynow + dy)
+            if res is None:
+                continue
+            place, newid = res
+            if newid == "□":
+                # stats voor 'strong slime' — pas aan naar wens
+                map.Mhp.append(2)
+                map.Mdamage.append(6)
+                map.Mdefense.append(4)
+                map.Mexp.append(1)
+                map.Mid.append("S")
+                map.MplaceID.append(place)
+                map.id[place] = "S"
+        return
     if map.lvl == 1:
         if room == 1:
             emptyT(xcentre,ycentre)
@@ -283,7 +406,7 @@ def gen(gen):
             chest_ally(xcentre, ycentre, "T", gen)
         if room == 6:
             central(xcentre, ycentre, "□", "O", "O")
-    elif map.lvl >= 4:
+    elif map.lvl == 4:
         if room == 1:
             emptyT(xcentre, ycentre)
         if room == 2:
@@ -296,3 +419,18 @@ def gen(gen):
             central(xcentre, ycentre, "□", "T", "□")
         if room == 6:
             central(xcentre, ycentre, "O", "O", "O")
+    elif map.lvl == 5:
+        bosscave(xcentre, ycentre, "Ŧ", "T", gen)
+    elif map.lvl >= 6:
+        if room == 1:
+            emptyT(xcentre, ycentre)
+        if room == 2:
+            chest_ally(xcentre, ycentre, "T", gen)
+        if room == 3:
+            chestroom(xcentre, ycentre, "Þ", "T", gen)
+        if room == 4:
+            central(xcentre, ycentre, "B", "B", "□")
+        if room == 5:
+            central(xcentre, ycentre, "B", "B", "B")
+        if room == 6:
+            bosscave(xcentre, ycentre, "Þ", "T", gen)
