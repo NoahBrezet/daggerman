@@ -72,8 +72,40 @@ def equip():
     choice = input()
     return choice
 
+def monster_defeat(monsterID):
+    global hp, max_hp, weapon, weapon_damage, exp
+    print(f"You defeated the {map.id[map.MplaceID[monsterID]]}!")
+    exp_gain = map.Mexp[monsterID]
+    print(f"You gain {exp_gain} EXP!")
+    if map.lvl == 5 and map.id[map.MplaceID[monsterID]] == "Ŧ":
+        map.lvl = 6
+        exp = 0
+        print(f"You leveled up! You are now level 6!")
+        max_hp += 5
+        hp = max_hp
+        print(f"Your max HP increased to {max_hp}!")
+        print("You found a kings dagger! (Damage 1d16)")
+        if equip() == "y":
+            weapon = "king's dagger"
+            weapon_damage = 16
+    exp += exp_gain
+    map.id[map.MplaceID[monsterID]] = "□"
+    map.Mhp.pop(monsterID)
+    map.Mdamage.pop(monsterID)
+    map.Mdefense.pop(monsterID)
+    map.Mexp.pop(monsterID)
+    map.Mid.pop(monsterID)
+    map.MplaceID.pop(monsterID)
+    if exp >= (map.lvl**2+map.lvl)/2 * 10:
+        exp -= (map.lvl**2+map.lvl)/2 * 10
+        map.lvl += 1
+        print(f"You leveled up! You are now level {map.lvl}!")
+        max_hp += 5
+        hp = max_hp
+        print(f"Your max HP increased to {max_hp}!")
+
 def attack(dx, dy):
-    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, exp, max_hp, hp
+    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense
     k = map.id.index("x")
     target_x = map.x[k] + dx
     target_y = map.y[k] + dy
@@ -270,7 +302,7 @@ def attack(dx, dy):
                             extra_slot = "dagger transmutation magic scroll"
                             extra_defense = 0
                             extra_damage = 0
-                elif map.lvl >= 6:
+                elif map.lvl == 6:
                     if treasure_roll <= 8:
                         print("You found a giantssword! (Damage 1d20)")
                         if equip() == "y":
@@ -321,6 +353,57 @@ def attack(dx, dy):
                             extra_slot = "dagger transmutation magic scroll"
                             extra_defense = 0
                             extra_damage = 0
+                elif map.lvl >= 7:
+                    if treasure_roll <= 8:
+                        print("You found a giantssword! (Damage 1d20)")
+                        if equip() == "y":
+                            weapon = "giantssword"
+                            weapon_damage = 20
+                    elif treasure_roll <= 16:
+                        print("You found a plate armor! (Defense +5)")
+                        if equip() == "y":
+                            armor = "plate armor"
+                            armor_defense = 5
+                    elif treasure_roll <= 22:
+                        print("You found a swift dagger! (Damage 1d20, use q for swift attack)")
+                        if equip() == "y":
+                            weapon = "swift dagger"
+                            weapon_damage = 20
+                    elif treasure_roll <= 28:
+                        print("You found a dash dagger! (Damage 1d20, use q for dash attack)")
+                        if equip() == "y":
+                            weapon = "dash dagger"
+                            weapon_damage = 20
+                    elif treasure_roll <= 34:
+                        print("You found a heal 8 magic scroll! (heal 6 hp when casted)")
+                        if equip() == "y":
+                            extra_slot = "heal 8 magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 39:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        if equip() == "y":
+                            extra_slot = "magic missile magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 44:
+                        print("You found a kill sphere magic scroll! (kill all creature next to you with 8 hp or less left)")
+                        if equip() == "y":
+                            extra_slot = "kill sphere magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 47:
+                        print("You found a kill magic scroll! (kill a creature with 12 hp or less left)")
+                        if equip() == "y":
+                            extra_slot = "kill magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
+                    elif treasure_roll <= 50:
+                        print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
+                        if equip() == "y":
+                            extra_slot = "dagger transmutation magic scroll"
+                            extra_defense = 0
+                            extra_damage = 0
                 return
             elif map.id[n] != "□":
                 action_taken = True
@@ -335,38 +418,26 @@ def attack(dx, dy):
                 print(f"You deal {attack_roll} damage!")
                 map.Mhp[monster_index] -= attack_roll
                 if map.Mhp[monster_index] <= 0:
-                    print(f"You defeated the {map.id[n]}!")
-                    exp_gain = map.Mexp[monster_index]
-                    print(f"You gain {exp_gain} EXP!")
-                    if map.lvl == 5 and map.id[n] == "Ŧ":
-                        map.lvl = 6
-                        exp = 0
-                        print(f"You leveled up! You are now level 6!")
-                        max_hp += 5
-                        hp = max_hp
-                        print(f"Your max HP increased to {max_hp}!")
-                        print("You found a kings dagger! (Damage 1d16)")
-                        if equip() == "y":
-                            weapon = "king's dagger"
-                            weapon_damage = 16
-                    exp += exp_gain
-                    map.id[n] = "□"
-                    map.Mhp.pop(monster_index)
-                    map.Mdamage.pop(monster_index)
-                    map.Mdefense.pop(monster_index)
-                    map.Mexp.pop(monster_index)
-                    map.Mid.pop(monster_index)
-                    map.MplaceID.pop(monster_index)
-                    if exp >= (map.lvl**2) * 10:
-                        exp -= (map.lvl**2) * 10
-                        map.lvl += 1
-                        print(f"You leveled up! You are now level {map.lvl}!")
-                        max_hp += 5
-                        hp = max_hp
-                        print(f"Your max HP increased to {max_hp}!")
+                    monster_defeat(monster_index)
                 return
             else:
                 return
+
+def kill_magic(dx, dy, strength):
+    global action_taken, weapon, weapon_damage, extra_slot, exp, max_hp, hp
+    k = map.id.index("x")
+    target_x = map.x[k] + dx
+    target_y = map.y[k] + dy
+    for n in range(len(map.id)):
+        if map.x[n] == target_x and map.y[n] == target_y:
+            if map.id[n] != "C" and map.id[n] != "□":
+                action_taken = True
+                print(f"You attack the {map.id[n]}!")
+                monster_index = next((m for m in range(len(map.MplaceID)) if map.MplaceID[m] == n), None)
+                if monster_index is None:
+                    return
+                if map.Mhp[monster_index] <= strength:
+                    monster_defeat(monster_index)
 
 g.start()
 
@@ -391,7 +462,7 @@ while True:
     print("choose an action: ")
     action = input()
     if action == "i":
-        print(f"HP: {hp}/{max_hp}, EXP: {exp}, Level: {map.lvl}, Exp to next level: {(map.lvl**2) * 10 - exp}")
+        print(f"HP: {hp}/{max_hp}, EXP: {exp}, Level: {map.lvl}, Exp to next level: {(map.lvl**2+map.lvl)/2 * 10 - exp}")
         print(f"Weapon: {weapon} (Damage: 1d{weapon_damage})")
         print(f"Armor: {armor} (Defense: {armor_defense})")
         print(f"Extra Slot: {extra_slot}")
@@ -541,13 +612,13 @@ while True:
                 print("You now have a swift dagger!")
                 weapon = "swift dagger"
         elif extra_slot == "magic missile magic scroll":
-            print("You do 1d4+2 damage.")
+            print(f"You do 1d2+{map.lvl} damage.")
             print("In wich direction do you want to attack? (w/a/s/d)")
             attack_input = input()
             extra_damage_save = extra_damage
             damage_save = weapon_damage
-            extra_damage = 2
-            weapon_damage = 4
+            extra_damage = map.lvl
+            weapon_damage = 2
             if attack_input == "a":
                 attack(-1, 0)
                 attack(-2, 0)
@@ -566,6 +637,22 @@ while True:
                 attack(0, 3)
             extra_damage = extra_damage_save
             weapon_damage = damage_save
+        elif extra_slot == "kill magic scroll":
+            print("In wich direction do you want to try to kill a monster? (w/a/s/d)")
+            attack_input = input()
+            if attack_input == "a":
+                kill_magic(-1, 0, 12)
+            if attack_input == "d":
+                kill_magic(1, 0, 12)
+            if attack_input == "w":
+                kill_magic(0, -1, 12)
+            if attack_input == "s":
+                kill_magic(0, 1, 12)
+        elif extra_slot == "kill sphere magic scroll":
+            kill_magic(-1, 0, 8)
+            kill_magic(1, 0, 8)
+            kill_magic(0, -1, 8)
+            kill_magic(0, 1, 8)
     if action_taken:
         k = map.id.index("x")
         for m in range(len(map.Mid)):
@@ -600,10 +687,14 @@ while True:
                         move_object(0, -1)
                     elif roll_dir == 4:
                         move_object(0, 1)
-        if heal == 0:
-            heal = 1
-        else:
+        if map.lvl >= 4:
             if hp < max_hp:
-                hp += 1
-            heal = 0
+                    hp += 1
+        else:
+            if heal == 0:
+                heal = 1
+            else:
+                if hp < max_hp:
+                    hp += 1
+                heal = 0
                 
