@@ -322,6 +322,138 @@ def bosscave(xc, yc, MBoss, M, gen):
         else:
             emptyT(xc2,yc)
 
+def wormboss(xc, yc, M, gen):
+    if gen == 1:
+        xc2 = xc-5
+        yc2 = yc-5
+        if (xc2/5, yc/5) not in zip(Lx, Ly) and (xc2/5, yc2/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc2/5)
+            Ly.append(yc2/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+        else:
+            able = False
+    if gen == 2:
+        xc2 = xc+5
+        yc2 = yc-5
+        if (xc2/5, yc/5) not in zip(Lx, Ly) and (xc2/5, yc2/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc2/5)
+            Ly.append(yc2/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+            save = xc2
+            xc2 = xc
+            xc = save
+        else:
+            able = False
+    if gen == 3:
+        xc2 = xc-5
+        yc2 = yc+5
+        if (xc2/5, yc/5) not in zip(Lx, Ly) and (xc2/5, yc2/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc2/5)
+            Ly.append(yc2/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+            save = yc2
+            yc2 = yc
+            yc = save
+        else:
+            able = False
+    if gen == 4:
+        xc2 = xc+5
+        yc2 = yc+5
+        if (xc2/5, yc/5) not in zip(Lx, Ly) and (xc2/5, yc2/5) not in zip(Lx, Ly) and (xc/5, yc2/5) not in zip(Lx, Ly):
+            able = True
+            Lx.append(xc2/5)
+            Ly.append(yc/5)
+            Lx.append(xc2/5)
+            Ly.append(yc2/5)
+            Lx.append(xc/5)
+            Ly.append(yc2/5)
+            save = yc2
+            yc2 = yc
+            yc = save
+            save = xc2
+            xc2 = xc
+            xc = save
+        else:
+            able = False
+    if able == True:
+        create_square(xc, yc, "□", 5)
+        create_square(xc, yc+1, "□", 0)
+        create_square(xc+1, yc, "□", 0)
+        create_square(xc+1, yc+1, "□", 0)
+        create_square(xc+2, yc, "□", 0)
+        create_square(xc-1, yc, M, 0)
+        create_mon(M)
+        create_square(xc-2, yc, "□", 5)
+        create_square(xc+1, yc-1, "□", 0)
+        create_square(xc, yc-1, "□", 0)
+        create_square(xc, yc-2, "□", 0)
+        create_square(xc-1, yc-1, "□", 0)
+        create_square(xc-1, yc-2, "□", 0)
+        create_square(xc-2, yc-1, "□", 0)
+        create_square(xc-2, yc-2, "◉", 0)
+        map.wormplaceID[2] = len(map.id)-1
+        create_square(xc2, yc2, "□", 5)
+        create_square(xc2, yc2-1, "□", 0)
+        create_square(xc2-1, yc2, "□", 0)
+        create_square(xc2-1, yc2-1, "□", 0)
+        create_square(xc2-2, yc2, "□", 0)
+        create_square(xc2+1, yc2, M, 0)
+        create_mon(M)
+        create_square(xc2+2, yc2, "□", 0)
+        create_square(xc2-1, yc2+1, "□", 0)
+        create_square(xc2, yc2+1, "□", 0)
+        create_square(xc2, yc2+2, "□", 5)
+        create_square(xc2+1, yc2+1, "□", 0)
+        create_square(xc2+1, yc2+2, "□", 0)
+        create_square(xc2+2, yc2+1, "□", 0)
+        create_square(xc2+2, yc2+2, "◉", 0)
+        map.wormplaceID[0] = len(map.id)-1
+        create_square(xc2, yc, "□", 5)
+        create_square(xc2-1, yc, "□", 0)
+        create_square(xc2, yc+1, "□", 0)
+        create_square(xc2-1, yc+1, "□", 0)
+        create_square(xc2, yc+2, "□", 0)
+        create_square(xc2, yc-1, M, 0)
+        create_mon(M)
+        create_square(xc2, yc-2, "□", 0)
+        create_square(xc2+1, yc+1, "□", 0)
+        create_square(xc2+1, yc, "□", 0)
+        create_square(xc2+2, yc, "□", 0)
+        create_square(xc2+1, yc-1, "□", 0)
+        create_square(xc2+2, yc-1, "□", 0)
+        create_square(xc2+1, yc-2, "□", 0)
+        create_square(xc2+2, yc-2, "□", 5)
+        create_square(xc, yc2, "□", 5)
+        create_square(xc+1, yc2, "□", 0)
+        create_square(xc, yc2-1, "□", 0)
+        create_square(xc+1, yc2-1, "□", 0)
+        create_square(xc, yc2-2, "□", 0)
+        create_square(xc, yc2+1, M, 0)
+        create_mon(M)
+        create_square(xc, yc2+2, "□", 0)
+        create_square(xc-1, yc2-1, "□", 0)
+        create_square(xc-1, yc2, "□", 0)
+        create_square(xc-2, yc2, "□", 0)
+        create_square(xc-1, yc2+1, "□", 5)
+        create_square(xc-2, yc2+1, "□", 0)
+        create_square(xc-1, yc2+2, "□", 0)
+        create_square(xc-2, yc2+2, "◉", 0)
+        map.wormplaceID[1] = len(map.id)-1
+    else:
+        central(xc, yc, "E", M, "□")
+
 def gen(gen):
     map.genID[map.id.index("x")] = 0
     xnow = map.x[map.id.index("x")]
@@ -446,7 +578,7 @@ def gen(gen):
             central(xcentre, ycentre, "B", "B", "□")
         if room == 6:
             bosscave(xcentre, ycentre, "Þ", "T", gen)
-    elif map.lvl >= 7:
+    elif map.lvl == 7:
         if room == 1:
             emptyT(xcentre, ycentre)
         if room == 2:
@@ -459,3 +591,5 @@ def gen(gen):
             central(xcentre, ycentre, "B", "B", "B")
         if room == 6:
             bosscave(xcentre, ycentre, "W", "Þ", gen)
+    elif map.lvl == 8:
+        wormboss(xcentre, ycentre, "W", gen)

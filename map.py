@@ -13,3 +13,5 @@ Mdefense = []
 Mexp = []
 Mid = []
 MplaceID = []
+
+wormplaceID = [-1, -1, -1]

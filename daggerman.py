@@ -68,9 +68,11 @@ def move_object(dx,dy):
         return True
 
 def equip():
-    print("Do you want to equip this item? (y/n)")
-    choice = input()
-    return choice
+    while True:
+        print("Do you want to equip this item? (y/n)")
+        choice = input()
+        if choice == "y" or choice == "n":
+            return choice
 
 def monster_defeat(monsterID):
     global hp, max_hp, weapon, weapon_damage, exp
@@ -524,7 +526,7 @@ while True:
                                 print("W - giant acid worm (HP: 30, Damage: 1d20, Defense: 6)") #exp 40
                                 if map.lvl >= 8:
                                     print("level 8 monsters:")
-                                    print("P - Purple worm (HP: , Damage: 1d, Defense: )")
+                                    print("◉ - Purple worm (HP: 100 , Damage: 1d20, Defense: 12)")
     elif action == "aa":
         attack(-1, 0)
     elif action == "dd":
