@@ -14,6 +14,9 @@ armor_defense = 0
 extra_defense = 0
 extra_slot = "Nothing"
 
+wormHP = 100
+wormphase = 0
+
 board_dict = {}
 
 def find_index_at(xc, yc):
@@ -305,45 +308,45 @@ def attack(dx, dy):
                             extra_defense = 0
                             extra_damage = 0
                 elif map.lvl == 6:
-                    if treasure_roll <= 8:
+                    if treasure_roll <= 6:
                         print("You found a giantssword! (Damage 1d20)")
                         if equip() == "y":
                             weapon = "giantssword"
                             weapon_damage = 20
-                    elif treasure_roll <= 16:
+                    elif treasure_roll <= 12:
                         print("You found a plate armor! (Defense +4)")
                         if equip() == "y":
                             armor = "plate armor"
                             armor_defense = 4
-                    elif treasure_roll <= 22:
+                    elif treasure_roll <= 18:
                         print("You found a swift dagger! (Damage 1d16, use q for swift attack)")
                         if equip() == "y":
                             weapon = "swift dagger"
                             weapon_damage = 16
-                    elif treasure_roll <= 28:
+                    elif treasure_roll <= 24:
                         print("You found a dash dagger! (Damage 1d16, use q for dash attack)")
                         if equip() == "y":
                             weapon = "dash dagger"
                             weapon_damage = 16
-                    elif treasure_roll <= 34:
+                    elif treasure_roll <= 28:
                         print("You found a power ring! (Damage, defense +3)")
                         if equip() == "y":
                             extra_slot = "power ring 3"
                             extra_damage = 3
                             extra_defense = 3
-                    elif treasure_roll <= 39:
+                    elif treasure_roll <= 33:
                         print ("You found a health potion! (Restores hp to max when used)")
                         if equip() == "y":
                             extra_slot = "health potion"
                             extra_damage = 0
                             extra_defense = 0
-                    elif treasure_roll <= 44:
+                    elif treasure_roll <= 40:
                         print("You found a heal 8 magic scroll! (heal 6 hp when casted)")
                         if equip() == "y":
                             extra_slot = "heal 8 magic scroll"
                             extra_defense = 0
                             extra_damage = 0
-                    elif treasure_roll <= 47:
+                    elif treasure_roll <= 45:
                         print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
                         if equip() == "y":
                             extra_slot = "magic missile magic scroll"
@@ -356,45 +359,45 @@ def attack(dx, dy):
                             extra_defense = 0
                             extra_damage = 0
                 elif map.lvl >= 7:
-                    if treasure_roll <= 8:
+                    if treasure_roll <= 6:
                         print("You found a giantssword! (Damage 1d20)")
                         if equip() == "y":
                             weapon = "giantssword"
                             weapon_damage = 20
-                    elif treasure_roll <= 16:
+                    elif treasure_roll <= 12:
                         print("You found a plate armor! (Defense +5)")
                         if equip() == "y":
                             armor = "plate armor"
                             armor_defense = 5
-                    elif treasure_roll <= 22:
+                    elif treasure_roll <= 18:
                         print("You found a swift dagger! (Damage 1d20, use q for swift attack)")
                         if equip() == "y":
                             weapon = "swift dagger"
                             weapon_damage = 20
-                    elif treasure_roll <= 28:
+                    elif treasure_roll <= 24:
                         print("You found a dash dagger! (Damage 1d20, use q for dash attack)")
                         if equip() == "y":
                             weapon = "dash dagger"
                             weapon_damage = 20
-                    elif treasure_roll <= 34:
+                    elif treasure_roll <= 28:
                         print("You found a heal 8 magic scroll! (heal 6 hp when casted)")
                         if equip() == "y":
                             extra_slot = "heal 8 magic scroll"
                             extra_defense = 0
                             extra_damage = 0
-                    elif treasure_roll <= 39:
+                    elif treasure_roll <= 33:
                         print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
                         if equip() == "y":
                             extra_slot = "magic missile magic scroll"
                             extra_defense = 0
                             extra_damage = 0
-                    elif treasure_roll <= 44:
+                    elif treasure_roll <= 40:
                         print("You found a kill sphere magic scroll! (kill all creature next to you with 8 hp or less left)")
                         if equip() == "y":
                             extra_slot = "kill sphere magic scroll"
                             extra_defense = 0
                             extra_damage = 0
-                    elif treasure_roll <= 47:
+                    elif treasure_roll <= 45:
                         print("You found a kill magic scroll! (kill a creature with 12 hp or less left)")
                         if equip() == "y":
                             extra_slot = "kill magic scroll"
@@ -407,6 +410,15 @@ def attack(dx, dy):
                             extra_defense = 0
                             extra_damage = 0
                 return
+            elif map.id[n] == "◉":
+                action_taken = True
+                print(f"You attack the purple worm!")
+                attack_roll = roll(weapon_damage) + extra_damage - 12
+                if attack_roll <= 0:
+                    print("Your attack did no damage!")
+                    return
+                print(f"You deal {attack_roll} damage!")
+                wormHP -= attack_roll
             elif map.id[n] != "□":
                 action_taken = True
                 print(f"You attack the {map.id[n]}!")
@@ -671,6 +683,7 @@ while True:
                 print (f"Your HP is now {hp}/{max_hp}.")
                 if hp <= 0:
                     print("GAME OVER")
+                    show_board()
                     exit()
             elif map.Mid[m] == "S" or map.Mid[m] == "E":
                 continue
@@ -701,4 +714,20 @@ while True:
                 if hp < max_hp:
                     hp += 1
                 heal = 0
-                
+        if map.lvl == 8:
+            if wormHP > 0:
+                if abs(map.x[map.wormplaceID[0]]-map.x[k]) + abs(map.y[map.MplaceID[m]]-map.y[k]) <= 2:
+                    print(f"The purple worm attacks you!")
+                    monster_attack = roll(20) - (armor_defense + extra_defense)
+                    if monster_attack <= 0:
+                        print("The monster's attack did no damage!")
+                        continue
+                    print(f"The purple worm deals {monster_attack} damage!")
+                    hp -= monster_attack
+                    print (f"Your HP is now {hp}/{max_hp}.")
+                    if hp <= 0:
+                        print("GAME OVER")
+                        show_board()
+                        exit()
+            else:
+                print("You defeated the purple worm and have won this run!")
