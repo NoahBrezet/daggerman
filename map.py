@@ -5,7 +5,7 @@ id = []
 genID = []
 
 lvl = 1
-runscompleted = 2
+runscompleted = 0
 
 # monster data
 Mhp = []
