@@ -25,7 +25,7 @@ wormphase = 0
 
 board_dict = {}
 
-Pclass = "None"  # Possible classes: adventurer, roque, wizard
+Pclass = "warrior"  # Possible classes: adventurer, roque, wizard, warrior
 
 def find_index_at(xc, yc):
     for i, (xx, yy) in enumerate(zip(map.x, map.y)):
@@ -175,23 +175,20 @@ def attack(dx, dy):
                             extra_slot = "defense amulet 1"
                             extra_defense = 1
                             extra_damage = 0
-                    elif treasure_roll <= 44:
+                    elif treasure_roll <= 43:
                         print("You found a short sword! (Damage 1d6)")
                         if equip("w") == "y":
                             weapon = "short sword"
                             weapon_damage = 6
-                    elif treasure_roll <= 48:
+                    elif treasure_roll <= 46:
                         print("You found a Chainmail Armor! (Defense +2)")
                         if equip("a") == "y":
                             armor = "Chainmail Armor"
                             armor_defense = 2
-                    elif treasure_roll == 49:
-                        print ("you found a health potion! (Restores hp to max when used")
-                        if equip("e") == "y":
-                            extra_slot = "health potion"
-                            extra_damage = 0
-                            extra_defense = 0
-                    elif treasure_roll == 50:
+                    elif treasure_roll <= 48:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        spell("magic missile magic scroll")
+                    elif treasure_roll <= 50:
                         print("You found a dash magic scroll! (Allows you to move twice in one turn)")
                         spell("dash magic scroll")
                 elif map.lvl == 2:
@@ -219,12 +216,15 @@ def attack(dx, dy):
                     elif treasure_roll <= 42:
                         print ("You found a heal magic scroll! (heal 2 hp when casted)")
                         spell("heal 2 magic scroll")
-                    elif treasure_roll <= 48:
+                    elif treasure_roll <= 43:
                         print ("You found a health potion! (Restores hp to max when used)")
                         if equip("e") == "y":
                             extra_slot = "health potion"
                             extra_damage = 0
                             extra_defense = 0
+                    elif treasure_roll <= 48:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        spell("magic missile magic scroll")
                     elif treasure_roll == 49:
                         print("You found a longsword! (Damage 1d8)")
                         if equip("w") == "y":
@@ -261,12 +261,15 @@ def attack(dx, dy):
                             extra_slot = "defense amulet 2"
                             extra_defense = 2
                             extra_damage = 0
-                    elif treasure_roll <= 48:
+                    elif treasure_roll <= 44:
                         print ("You found a health potion! (Restores hp to max when used)")
                         if equip("e") == "y":
                             extra_slot = "health potion"
                             extra_damage = 0
                             extra_defense = 0
+                    elif treasure_roll <= 48:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        spell("magic missile magic scroll")
                     elif treasure_roll == 49:
                         print("You found a greatsword! (Damage 1d12)")
                         if equip("w") == "y":
@@ -513,36 +516,36 @@ while True:
         print ("Good luck!")
     elif action == "m":
         print("level 1 monsters:")
-        print("K - Kobold (HP: 4, Damage: 1d2)") #exp 2
-        print("S - slime (HP: 2, Damage: 1d3) slimes can't move") #exp 1
+        print(f"K - Kobold (HP: {4+map.runscompleted}, Damage: 1d2)") #exp 2
+        print(f"S - slime (HP: {2+map.runscompleted}, Damage: 1d3) slimes can't move") #exp 1
         if map.lvl >= 2:
             print("level 2 monsters:")
-            print("L - Lizardman (HP: 10, Damage: 1d3, Defense: 1)") #exp 4
-            print("F - Freakish Abberation (HP: 6, Damage: 1d6)") #exp 3
+            print(f"L - Lizardman (HP: {10+map.runscompleted}, Damage: 1d3, Defense: 1)") #exp 4
+            print(f"F - Freakish Abberation (HP: {6+map.runscompleted}, Damage: 1d6)") #exp 3
             if map.lvl >= 3:
                 print("level 3 monsters:")
-                print("O - Orc (HP: 10, Damage: 1d8, Defense: 2)") #exp 6
-                print("T - Troll (HP: 16, Damage: 1d6, Defense: 3)") #exp 7
+                print(f"O - Orc (HP: {10+2*map.runscompleted}, Damage: 1d8, Defense: 2)") #exp 6
+                print(f"T - Troll (HP: {16+2*map.runscompleted}, Damage: 1d6, Defense: 3)") #exp 7
                 if map.lvl >= 4:
                     print("level 4 monsters:")
-                    print("G - Golem (HP: 10, Damage: 1d6, Defense: 4)") #exp 7
-                    print("Ø - Ogre (HP: 20, Damage: 1d10, Defense: 2)") #exp 12
+                    print(f"G - Golem (HP: {10+3*map.runscompleted}, Damage: 1d6, Defense: 4)") #exp 7
+                    print(f"Ø - Ogre (HP: {2+2*map.runscompleted}, Damage: 1d10, Defense: 2)") #exp 12
                     if map.lvl >= 5:
                         print("level 5 monsters:")
-                        print("Ŧ - King troll (HP: 50, Damage: 1d16, Defense: 4)") #exp 0
-                        print("S - strong slime (HP: 2, Damage: 1d6, Defense: 5)") #exp 12
+                        print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d16, Defense: 4)") #exp 0
+                        print(f"S - strong slime (HP: {2+map.runscompleted}, Damage: 1d6, Defense: 5)") #exp 12
                         if map.lvl >= 6:
                             print("level 6 monsters:")
-                            print("B - Giant Beetle (HP: 10, Damage: 1d10, Defense: 8)") #exp 16
-                            print("Þ - Troll riding Giant Beetle (HP: 26, Damage: 1d12, Defense: 8)") #exp 30
-                            print("T - Strong Trolls (HP: 16, Damage: 1d12, Defense: 4)") #exp 12
+                            print(f"B - Giant Beetle (HP: {10+2*map.runscompleted}, Damage: 1d10, Defense: 8)") #exp 16
+                            print(f"Þ - Troll riding Giant Beetle (HP: {26+4*map.runscompleted}, Damage: 1d12, Defense: 8)") #exp 30
+                            print(f"T - Strong Trolls (HP: {16+2*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 12
                             if map.lvl >= 7:
                                 print("level 7 monsters:")
-                                print("E - purple worm egg (HP: 15, Damage: 1d16, Defense: 8)") #exp 20
-                                print("W - giant acid worm (HP: 30, Damage: 1d20, Defense: 6)") #exp 40
+                                print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8)") #exp 20
+                                print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 6)") #exp 40
                                 if map.lvl >= 8:
                                     print("level 8 monsters:")
-                                    print("◉ - Purple worm (HP: 50 , Damage: 1d20, Defense: 12)")
+                                    print(f"◉ - Purple worm (HP: {50+10*map.runscompleted} , Damage: 1d20, Defense: 12)")
     elif action == "aa":
         attack(-1, 0)
     elif action == "dd":
@@ -642,13 +645,16 @@ while True:
                 print("You now have a swift dagger!")
                 weapon = "swift dagger"
         elif extra_slot == "magic missile magic scroll":
-            print(f"You do 1d2+{map.lvl} damage.")
-            print("In wich direction do you want to attack? (w/a/s/d)")
-            attack_input = input()
             extra_damage_save = extra_damage
             damage_save = weapon_damage
-            extra_damage = map.lvl
             weapon_damage = 2
+            if map.lvl >= 6:
+                extra_damage = map.lvl+2
+            else:
+                extra_damage = map.lvl
+            print(f"You do 1d2+{extra_damage} damage.")
+            print("In wich direction do you want to attack? (w/a/s/d)")
+            attack_input = input()
             if attack_input == "a":
                 attack(-1, 0)
                 attack(-2, 0)
