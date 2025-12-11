@@ -16,7 +16,7 @@ extra_slot = "Nothing"
 adventurer_extra_slot = "Nothing"
 adventurer_extra_damage = 0
 adventurer_extra_defense = 0
-spells_known = ["dash magic scroll"]
+spells_known = []
 class_attack = 0
 class_defense = 0
 
@@ -25,7 +25,7 @@ wormphase = 0
 
 board_dict = {}
 
-Pclass = "wizard"  # Possible classes: adventurer, roque, wizard, warrior
+Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior
 
 def find_index_at(xc, yc):
     for i, (xx, yy) in enumerate(zip(map.x, map.y)):
