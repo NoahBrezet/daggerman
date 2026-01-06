@@ -15,10 +15,10 @@ extra_damage = 0
 armor = "Nothing"
 armor_defense = 0
 extra_defense = 0
-extra_slot = "Nothing"
+extra_slot = "magic missile magic scroll"
 adventurer_extra_slot = "Nothing"
 adventurer_extra_defense = 0
-spells_known = []
+spells_known = ["heal 2 magic scroll"]
 class_attack = 0
 
 wormHP = 50 + 10*map.runscompleted
@@ -589,7 +589,7 @@ if map.runscompleted > 0:
         print("Invalid class. Please choose from: adventurer, roque, wizard, warrior, necromancer, pyromancer")
         Pclass = input()
 
-if Pclass == "pyromancer":
+if Pclass == "pyromancer" or Pclass == "warrior":
     class_attack = 1
 
 heal = 0
@@ -652,6 +652,10 @@ while True:
             print ("f - dash")
         if Pclass == "adventurer":
             print ("f - switch extra slots")
+        if Pclass == "necromancer":
+            print ("f - suck life from almost dead creatures")
+        if Pclass == "pyromancer":
+            print ("f - burn stationary enemies around you")
         print ("quit - end the game.")
         print ("h - see this help message again.")
         print ("Later you may get more options.")
@@ -676,7 +680,7 @@ while True:
                     if map.lvl >= 5:
                         print("level 5 monsters:")
                         print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 0
-                        print(f"S - strong slime (HP: {2+map.runscompleted}, Damage: 1d6, Defense: 5)") #exp 12
+                        print(f"S - strong slime (HP: {2+map.runscompleted}, Damage: 1d6, Defense: {map.lvl})") #exp 12
                         if map.lvl >= 6:
                             print("level 6 monsters:")
                             print(f"B - Giant Beetle (HP: {10+2*map.runscompleted}, Damage: 1d10, Defense: 8)") #exp 16
@@ -744,7 +748,7 @@ while True:
             print("What spell do you want to cast?")
             index = 0
             for spell_name in spells_known:
-                print(f"{index} - {spell_name}")
+                print(f"{index} - {spell_name[0:-13]}")
                 index += 1
             save = extra_slot
             spell_choice = input("Voer een getal in: ")
@@ -827,32 +831,31 @@ while True:
         elif extra_slot == "magic missile magic scroll":
             extra_damage_save = extra_damage
             damage_save = weapon_damage
-            weapon_damage = 2
-            if map.lvl >= 6:
+            try:
+                weapon_damage = 2
                 extra_damage = map.lvl+2
-            else:
-                extra_damage = map.lvl
-            print(f"You do 1d2+{extra_damage} damage.")
-            print("In wich direction do you want to attack? (w/a/s/d)")
-            attack_input = input()
-            if attack_input == "a":
-                attack(-1, 0)
-                attack(-2, 0)
-                attack(-3, 0)
-            elif attack_input == "d":
-                attack(1, 0)
-                attack(2, 0)
-                attack(3, 0)
-            elif attack_input == "w":
-                attack(0, -1)
-                attack(0, -2)
-                attack(0 ,-3)
-            elif attack_input == "s":
-                attack(0, 1)
-                attack(0 ,2)
-                attack(0, 3)
-            extra_damage = extra_damage_save
-            weapon_damage = damage_save
+                print(f"You do 1d2+{extra_damage} damage.")
+                print("In wich direction do you want to attack? (w/a/s/d)")
+                attack_input = input()
+                if attack_input == "a":
+                    attack(-1, 0)
+                    attack(-2, 0)
+                    attack(-3, 0)
+                elif attack_input == "d":
+                    attack(1, 0)
+                    attack(2, 0)
+                    attack(3, 0)
+                elif attack_input == "w":
+                    attack(0, -1)
+                    attack(0, -2)
+                    attack(0 ,-3)
+                elif attack_input == "s":
+                    attack(0, 1)
+                    attack(0 ,2)
+                    attack(0, 3)
+            finally:
+                extra_damage = extra_damage_save
+                weapon_damage = damage_save
         elif extra_slot == "kill magic scroll":
             print("In wich direction do you want to try to kill a monster? (w/a/s/d)")
             attack_input = input()

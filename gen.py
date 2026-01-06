@@ -611,7 +611,7 @@ def gen(gen):
                 if map.lvl <= 6:
                     map.Mhp.append(2+map.runscompleted)
                     map.Mdamage.append(6)
-                    map.Mdefense.append(4)
+                    map.Mdefense.append(map.lvl)
                     map.Mexp.append(1)
                     map.Mid.append("S")
                     map.MplaceID.append(place)
