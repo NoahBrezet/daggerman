@@ -10,7 +10,7 @@ hp = 10
 weapon = "dagger"
 weapon_damage = 2
 extra_damage = 0
-armor = "Notthing"
+armor = "Nothing"
 armor_defense = 0
 extra_defense = 0
 extra_slot = "Nothing"
@@ -108,6 +108,11 @@ def monster_defeat(monsterID):
         if equip("w") == "y":
             weapon = "king's dagger"
             weapon_damage = 16
+    if map.id[map.MplaceID[monsterID]] == "Ω":
+        print("You have defeated the Devil!")
+        run_completed()
+        show_board()
+        exit()
     exp += exp_gain
     map.id[map.MplaceID[monsterID]] = "□"
     map.Mhp.pop(monsterID)
@@ -116,7 +121,7 @@ def monster_defeat(monsterID):
     map.Mexp.pop(monsterID)
     map.Mid.pop(monsterID)
     map.MplaceID.pop(monsterID)
-    if exp >= (map.lvl**2+map.lvl)/2 * 10 and map.lvl != 5 and map.lvl != 8:
+    if exp >= (map.lvl**2+map.lvl)/2 * 10 and map.lvl not in [5, 8, 10]:
         exp -= (map.lvl**2+map.lvl)/2 * 10
         map.lvl += 1
         print(f"You leveled up! You are now level {map.lvl}!")
@@ -363,16 +368,22 @@ def attack(dx, dy):
                     elif treasure_roll <= 50:
                         print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
                         spell("dagger transmutation magic scroll")
-                elif map.lvl >= 7:
+                elif map.lvl <= 8:
                     if treasure_roll <= 6:
-                        print("You found a giantssword! (Damage 1d20)")
-                        if equip("w") == "y":
-                            weapon = "giantssword"
-                            weapon_damage = 20
+                        if Pclass == "warrior":
+                            print("You found a warriorssword! (Damage 1d24)")
+                            if equip("w") == "y":
+                                weapon = "warriorssword"
+                                weapon_damage = 24
+                        else:
+                            print("You found a giantssword! (Damage 1d20)")
+                            if equip("w") == "y":
+                                weapon = "giantssword"
+                                weapon_damage = 20
                     elif treasure_roll <= 12:
-                        print("You found a plate armor! (Defense +5)")
+                        print("You found a worm armor! (Defense +5)")
                         if equip("a") == "y":
-                            armor = "plate armor"
+                            armor = "worm armor"
                             armor_defense = 5
                     elif treasure_roll <= 18:
                         print("You found a swift dagger! (Damage 1d20, use q for swift attack)")
@@ -403,6 +414,58 @@ def attack(dx, dy):
                     elif treasure_roll <= 50:
                         print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
                         spell("dagger transmutation magic scroll")
+                elif map.lvl >= 9:
+                    if treasure_roll <= 6:
+                        if Pclass == "warrior":
+                            print("You found a warriorssword! (Damage 1d30)")
+                            if equip("w") == "y":
+                                weapon = "warriorssword"
+                                weapon_damage = 30
+                        else:
+                            print("You found a giantssword! (Damage 1d24)")
+                            if equip("w") == "y":
+                                weapon = "giantssword"
+                                weapon_damage = 24
+                    elif treasure_roll <= 12:
+                        print("You found a master armor! (Defense +6)")
+                        if equip("a") == "y":
+                            armor = "master armor"
+                            armor_defense = 6
+                    elif treasure_roll <= 18:
+                        print("You found a swift dagger! (Damage 1d24, use q for swift attack)")
+                        if equip("w") == "y":
+                            weapon = "swift dagger"
+                            weapon_damage = 24
+                    elif treasure_roll <= 24:
+                        print("You found a dash dagger! (Damage 1d24, use q for dash attack)")
+                        if equip("w") == "y":
+                            weapon = "dash dagger"
+                            weapon_damage = 24
+                    elif treasure_roll <= 28:
+                        print("You found a power ring! (Damage, defense +4)")
+                        if equip("e") == "y":
+                            extra_slot = "power ring 4"
+                            extra_damage = 4
+                            extra_defense = 4
+                    elif treasure_roll <= 33:
+                        print("You found a magic missile magic scroll! (ranged attack to one side when casted)")
+                        spell("magic missile magic scroll")
+                    elif treasure_roll <= 35:
+                        print ("You found a shaking dash magic scroll! (Allows you to move two times and weak monsters around you die)")
+                        spell("shaking dash magic scroll")
+                    elif treasure_roll <= 40:
+                        print("You found a kill sphere magic scroll! (kill all creature next to you with 8 hp or less left)")
+                        spell("kill sphere magic scroll")
+                    elif treasure_roll <= 45:
+                        if Pclass == "necromancer":
+                            print("You found a summon zombie slush magic scroll! (summon a zombie slush when casted)")
+                            spell("summon zombie slush magic scroll")
+                        else:
+                            print("You found a kill magic scroll! (kill a creature with 12 hp or less left)")
+                            spell("kill magic scroll")
+                    elif treasure_roll <= 50:
+                        print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
+                        spell("dagger transmutation magic scroll")
                 return
             elif map.id[n] == "◉":
                 action_taken = True
@@ -413,7 +476,7 @@ def attack(dx, dy):
                     return
                 print(f"You deal {attack_roll} damage!")
                 wormHP -= attack_roll
-            elif map.id[n] != "□":
+            elif map.id[n] != "□" and map.id[n] != "x":
                 action_taken = True
                 print(f"You attack the {map.id[n]}!")
                 monster_index = next((m for m in range(len(map.MplaceID)) if map.MplaceID[m] == n), None)
@@ -458,6 +521,15 @@ def wormmove(dx ,dy):
         map.wormplaceID[2] = map.wormplaceID[1]
         map.wormplaceID[1] = map.wormplaceID[0]
         map.wormplaceID[0] = target_idx
+
+def run_completed():
+    global line_num
+    print(f"Congratulations, {username}! You have completed the run!")
+    with open("playerinfo.txt", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    lines[line_num] = f"{username},{map.runscompleted+1}\n"
+    with open("playerinfo.txt", "w", encoding="utf-8") as f:
+        f.writelines(lines)
 
 gen.start()
 
@@ -507,7 +579,6 @@ if map.runscompleted > 0:
     print("As a warrior you have 25 percent chance you block an attack.")
     print()
     print("As a necromancer you can suck life of almost dead creatures with f gaining +1 hp per level")
-    print("You get -1 damage with the necromancer class.")
     print()
     print("What class do you want to be? (adventurer, roque, wizard, warrior, necromancer)")
     Pclass = input()
@@ -545,7 +616,6 @@ while True:
             print("As a warrior you have 25 percent chance you block an attack.")
         elif Pclass == "necromancer":
             print("As a necromancer you can suck life of almost dead creatures with f gaining +1 hp per level")
-            print("You get -1 damage with the necromancer class.")
         print()
     elif action == "quit":
         break
@@ -580,7 +650,7 @@ while True:
     elif action == "m":
         print("level 1 monsters:")
         print(f"K - Kobold (HP: {4+map.runscompleted}, Damage: 1d2)") #exp 2
-        print(f"S - slime (HP: {2+map.runscompleted}, Damage: 1d3) slimes can't move") #exp 1
+        print(f"S - slime (HP: {2+map.runscompleted}, Damage: 1d3) can't move") #exp 1
         if map.lvl >= 2:
             print("level 2 monsters:")
             print(f"L - Lizardman (HP: {10+map.runscompleted}, Damage: 1d3, Defense: 1)") #exp 4
@@ -604,13 +674,21 @@ while True:
                             print(f"T - Strong Trolls (HP: {16+2*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 12
                             if map.lvl >= 7:
                                 print("level 7 monsters:")
-                                print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8)") #exp 20
+                                print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8) can't move") #exp 20
                                 print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 6)") #exp 40
                                 if Pclass == "necromancer":
                                     print(f"Z - zombie slush (HP: 1, Damage: 1d8, Defense: 0)") #exp 50
                                 if map.lvl >= 8:
                                     print("level 8 monsters:")
                                     print(f"◉ - Purple worm (HP: {50+10*map.runscompleted} , Damage: 1d20, Defense: 12)")
+                                    if map.lvl >= 9:
+                                        print("level 9 monsters:")
+                                        print(f"D - Demon (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 10)") #exp 55
+                                        print(f"H - Hellhound (HP: {20+5*map.runscompleted}, Damage: 1d24, Defense: 8)") #exp 40
+                                        print(f"P - Prickly demonic cactus (HP: {10+4*map.runscompleted}, Damage: 1d12, Defense: 15) can't move") #exp 25
+                                        if map.lvl >= 10:
+                                            print("level 10 monsters:")
+                                            print(f"Ω - Devil (HP: {100+20*map.runscompleted}, Damage: 1d30, Defense: 15)") #exp 0
     elif action == "aa":
         attack(-1, 0)
     elif action == "dd":
@@ -703,6 +781,31 @@ while True:
                 move(0, -1)
             elif move_input2 == "s":
                 move(0, 1)
+        elif extra_slot == "shaking dash magic scroll":
+            print("You can move two times and weak monsters around you die!")
+            move_input1 = input("First move (w/a/s/d): ")
+            if move_input1 == "a":
+                move(-1, 0)
+            elif move_input1 == "d":
+                move(1, 0)
+            elif move_input1 == "w":
+                move(0, -1)
+            elif move_input1 == "s":
+                move(0, 1)
+            show_board()
+            move_input2 = input("Second move (w/a/s/d): ")
+            if move_input2 == "a":
+                move(-1, 0)
+            elif move_input2 == "d":
+                move(1, 0)
+            elif move_input2 == "w":
+                move(0, -1)
+            elif move_input2 == "s":
+                move(0, 1) 
+            kill_magic(-1, 0, 10)
+            kill_magic(1, 0, 10)
+            kill_magic(0, -1, 10)
+            kill_magic(0, 1, 10)
         elif extra_slot == "dagger transmutation magic scroll":
             print("This spell does not take a turn.")
             if weapon == "swift dagger":
@@ -852,7 +955,7 @@ while True:
                     print("GAME OVER")
                     show_board()
                     exit()
-            elif map.Mid[m] == "S" or map.Mid[m] == "E":
+            elif map.Mid[m] in ["S", "E", "P"]:
                 continue
             else:
                 board_dict_update()
@@ -910,11 +1013,18 @@ while True:
                     elif roll_dir == 4:
                         wormmove(0, 1)
             else:
-                print("You defeated the purple worm and have won this run!")
-                map.runscompleted += 1
-                with open("playerinfo.txt", "r", encoding="utf-8") as f:
-                    lines = f.readlines()    
-                lines[line_num] = f"{username},{map.runscompleted}\n"
-                with open("playerinfo.txt", "w", encoding="utf-8") as f:
-                    f.writelines(lines)
-                exit()
+                print("You defeated the purple worm!")
+                if map.runscompleted < 2:
+                    run_completed()
+                    exit()
+                else:
+                    map.lvl = 9
+                    map.id[map.wormplaceID[0]] = "□"
+                    map.id[map.wormplaceID[1]] = "□"
+                    map.id[map.wormplaceID[2]] = "□"
+                    map.wormplaceID = [-1, -1, -1]
+                    exp = 0
+                    print(f"You leveled up! You are now level 9!")
+                    max_hp += 5
+                    hp = max_hp
+                    print(f"Your max HP increased to {max_hp}!")
