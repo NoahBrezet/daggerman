@@ -1,6 +1,7 @@
 import random
 import map
 import gen
+import os
 
 # Player stats
 exp = 0
@@ -20,12 +21,12 @@ spells_known = []
 class_attack = 0
 class_defense = 0
 
-wormHP = 50 + 10*map.runscompleted
-wormphase = 0
+wormHP = 0 + 10*map.runscompleted
 
 board_dict = {}
 
-Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior
+Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior, necromancer
+
 
 def find_index_at(xc, yc):
     for i, (xx, yy) in enumerate(zip(map.x, map.y)):
@@ -393,8 +394,12 @@ def attack(dx, dy):
                         print("You found a kill sphere magic scroll! (kill all creature next to you with 8 hp or less left)")
                         spell("kill sphere magic scroll")
                     elif treasure_roll <= 45:
-                        print("You found a kill magic scroll! (kill a creature with 12 hp or less left)")
-                        spell("kill magic scroll")
+                        if Pclass == "necromancer":
+                            print("You found a summon zombie slush magic scroll! (summon a zombie slush when casted)")
+                            spell("summon zombie slush magic scroll")
+                        else:
+                            print("You found a kill magic scroll! (kill a creature with 12 hp or less left)")
+                            spell("kill magic scroll")
                     elif treasure_roll <= 50:
                         print("You found a dagger transmutation magic scroll! (transform dagger into another type when casted)")
                         spell("dagger transmutation magic scroll")
@@ -456,17 +461,59 @@ def wormmove(dx ,dy):
 
 gen.start()
 
-print ("You are 'x'.")
-print ("Squares you can stand on are marked with '□'.")
-print ("After we ask you for your action you can type w a s or d to move.")
-print ("Or you can type ww aa ss or dd to attack in that direction.")
-print ("you can also type i to see your inventory and statts.")
-print ("You can type m to see every monster that you can currently fight.")
-print ("You can type quit to end the game.")
-print ("if you want the instructions again type h.")
-print ("Later you may get more options.")
-print ("You can open chests by attacking them.")
-print ("Good luck!")
+IsSaved = False
+line_num = -1
+print("Enter username: ")
+username = input()
+with open("playerinfo.txt", "r", encoding="utf-8") as f:
+    while True:
+        line_num += 1
+        line = f.readline()
+        if not line:
+            break
+        parts = line.strip().split(",")
+        if parts[0] == username:
+            map.runscompleted = int(parts[1])
+            print(f"Welcome back, {username}! You have completed {map.runscompleted} runs.")
+            IsSaved = True
+            break
+if not IsSaved:
+    with open("playerinfo.txt", "a", encoding="utf-8") as f:
+        f.write(f"{username},0\n")
+
+if map.runscompleted == 0:
+    print ("You are 'x'.")
+    print ("Squares you can stand on are marked with '□'.")
+    print ("After we ask you for your action you can type w a s or d to move.")
+    print ("Or you can type ww aa ss or dd to attack in that direction.")
+    print ("you can also type i to see your inventory and statts.")
+    print ("You can type m to see every monster that you can currently fight.")
+    print ("You can type quit to end the game.")
+    print ("if you want the instructions again type h.")
+    print ("Later you may get more options.")
+    print ("You can open chests by attacking them.")
+    print ("Good luck!")
+
+if map.runscompleted > 0:
+    print()
+    print("As an adventurer you can switch between your extra slots and  your adventurer slot by pressing f.")
+    print("You can't get bonusses or do special actions from your adventurer slot.")
+    print()
+    print("As a roque you do +1 damage with daggers.")
+    print("You can dash with f to move twice in one turn.")
+    print()
+    print("As a wizard you can learn spells instead of using a scroll.")
+    print()
+    print("As a warrior you have 25 percent chance you block an attack.")
+    print()
+    print("As a necromancer you can suck life of almost dead creatures with f gaining +1 hp per level")
+    print("You get -1 damage with the necromancer class.")
+    print()
+    print("What class do you want to be? (adventurer, roque, wizard, warrior, necromancer)")
+    Pclass = input()
+    while Pclass not in ["adventurer", "roque", "wizard", "warrior", "necromancer"]:
+        print("Invalid class. Please choose from: adventurer, roque, wizard, warrior, necromancer")
+        Pclass = input()
 
 heal = 0
 while True:
@@ -496,6 +543,9 @@ while True:
             print("As a wizard you can learn spells instead of using a scroll.")
         elif Pclass == "warrior":
             print("As a warrior you have 25 percent chance you block an attack.")
+        elif Pclass == "necromancer":
+            print("As a necromancer you can suck life of almost dead creatures with f gaining +1 hp per level")
+            print("You get -1 damage with the necromancer class.")
         print()
     elif action == "quit":
         break
@@ -542,10 +592,10 @@ while True:
                 if map.lvl >= 4:
                     print("level 4 monsters:")
                     print(f"G - Golem (HP: {10+3*map.runscompleted}, Damage: 1d6, Defense: 4)") #exp 7
-                    print(f"Ø - Ogre (HP: {2+2*map.runscompleted}, Damage: 1d10, Defense: 2)") #exp 12
+                    print(f"Ø - Ogre (HP: {20+2*map.runscompleted}, Damage: 1d10, Defense: 2)") #exp 12
                     if map.lvl >= 5:
                         print("level 5 monsters:")
-                        print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d16, Defense: 4)") #exp 0
+                        print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 0
                         print(f"S - strong slime (HP: {2+map.runscompleted}, Damage: 1d6, Defense: 5)") #exp 12
                         if map.lvl >= 6:
                             print("level 6 monsters:")
@@ -556,6 +606,8 @@ while True:
                                 print("level 7 monsters:")
                                 print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8)") #exp 20
                                 print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 6)") #exp 40
+                                if Pclass == "necromancer":
+                                    print(f"Z - zombie slush (HP: 1, Damage: 1d8, Defense: 0)") #exp 50
                                 if map.lvl >= 8:
                                     print("level 8 monsters:")
                                     print(f"◉ - Purple worm (HP: {50+10*map.runscompleted} , Damage: 1d20, Defense: 12)")
@@ -704,6 +756,18 @@ while True:
             kill_magic(1, 0, 8)
             kill_magic(0, -1, 8)
             kill_magic(0, 1, 8)
+        elif extra_slot == "summon zombie slush magic scroll":
+            for n in range(len(map.id)):
+                if map.id[n] == "□":
+                    if abs(map.x[n]-map.x[map.id.index("x")]) + abs(map.y[n]-map.y[map.id.index("x")]) <= 1:
+                        print("You summon a zombie slush next to you!")
+                        map.id[n] = "Z"
+                        map.Mhp.append(1)
+                        map.Mdamage.append(8)
+                        map.Mdefense.append(0)
+                        map.Mexp.append(0)
+                        map.Mid.append("Z")
+                        map.MplaceID.append(n)
         if Pclass == "wizard":
             extra_slot = save
     elif action == "f":
@@ -738,9 +802,39 @@ while True:
             save = extra_defense
             extra_defense = adventurer_extra_defense
             adventurer_extra_defense = save
+        elif Pclass == "necromancer":
+            print("In wich direction do you want to suck life from a creature? (w/a/s/d)")
+            attack_input = input()
+            if attack_input == "a":
+                kill_magic(-1, 0, 2*map.lvl)
+            if attack_input == "d":
+                kill_magic(1, 0, 2*map.lvl)
+            if attack_input == "w":
+                kill_magic(0, -1, 2*map.lvl)
+            if attack_input == "s":
+                kill_magic(0, 1, 2*map.lvl)
+            if action_taken:
+                hp += map.lvl
+                if hp > max_hp:
+                    hp = max_hp
+                print(f"You sucked all life from the creature and restored {map.lvl} HP!")
     if action_taken:
         k = map.id.index("x")
-        for m in range(len(map.Mid)):
+        m = -1
+        while m+1 < len (map.MplaceID):
+            m += 1
+            if map.Mid[m] == "Z":
+                n = len(map.MplaceID)
+                map.id[k] = "□"
+                map.id[map.MplaceID[m]] = "x"
+                attack(-1, 0)
+                attack(1, 0)
+                attack(0, -1)
+                attack(0, 1)
+                m = m-(n-len(map.MplaceID))
+                map.id[map.MplaceID[m]] = "Z"
+                map.id[k] = "x"
+                continue
             if abs(map.x[map.MplaceID[m]]-map.x[k]) + abs(map.y[map.MplaceID[m]]-map.y[k]) <= 1:
                 print(f"The {map.Mid[m]} attacks you!")
                 if Pclass == "warrior":
@@ -817,4 +911,10 @@ while True:
                         wormmove(0, 1)
             else:
                 print("You defeated the purple worm and have won this run!")
+                map.runscompleted += 1
+                with open("playerinfo.txt", "r", encoding="utf-8") as f:
+                    lines = f.readlines()    
+                lines[line_num] = f"{username},{map.runscompleted}\n"
+                with open("playerinfo.txt", "w", encoding="utf-8") as f:
+                    f.writelines(lines)
                 exit()

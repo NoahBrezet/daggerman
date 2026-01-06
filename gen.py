@@ -30,7 +30,7 @@ def start():
 def create_mon(new_id):
     if new_id != "□" and new_id != "C":
         if new_id == "K":
-            create_monster(4+map.runscompleted, 3, 0, 2, "K")
+            create_monster(4+map.runscompleted, 2, 0, 2, "K")
         elif new_id == "S":
             create_monster(2+map.runscompleted, 3, 0, 1, "S")
         elif new_id == "F":
