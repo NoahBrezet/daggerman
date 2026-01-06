@@ -21,7 +21,7 @@ spells_known = []
 class_attack = 0
 class_defense = 0
 
-wormHP = 0 + 10*map.runscompleted
+wormHP = 50 + 10*map.runscompleted
 
 board_dict = {}
 
