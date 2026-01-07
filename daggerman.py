@@ -20,6 +20,7 @@ adventurer_extra_slot = "Nothing"
 adventurer_extra_defense = 0
 spells_known = ["heal 2 magic scroll"]
 class_attack = 0
+mission_done = []
 
 total_damage_taken = 0  
 total_chests_opened = 0
@@ -529,11 +530,24 @@ def wormmove(dx ,dy):
         map.wormplaceID[0] = target_idx
 
 def run_completed():
-    global line_num
+    global line_num, mission_done
     print(f"Congratulations, {username}! You have completed the run!")
     with open("playerinfo.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
-    lines[line_num] = f"{username},{map.runscompleted+1}\n"
+    if map.runscompleted < 3:
+        lines[line_num] = f"{username},{map.runscompleted+1}\n"
+    elif map.runscompleted == 3:
+        lines[line_num] = f"{username},{map.runscompleted+1},{mission_choice}\n"
+    else:
+        existing = list(mission_done)
+        mc = globals().get("mission_choice")
+        if mc and mc not in existing:
+            existing.append(mc)
+        if existing:
+            missions_str = ",".join(existing)
+            lines[line_num] = f"{username},{map.runscompleted+1},{missions_str}\n"
+        else:
+            lines[line_num] = f"{username},{map.runscompleted+1}\n"
     with open("playerinfo.txt", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
@@ -552,6 +566,10 @@ with open("playerinfo.txt", "r", encoding="utf-8") as f:
         parts = line.strip().split(",")
         if parts[0] == username:
             map.runscompleted = int(parts[1])
+            if map.runscompleted >= 3:
+                for n in range(2, len(parts)):
+                    if parts[n] != "":
+                        mission_done.append(parts[n])
             print(f"Welcome back, {username}! You have completed {map.runscompleted} runs.")
             IsSaved = True
             break
@@ -598,14 +616,19 @@ if map.runscompleted > 0:
 
 if map.runscompleted > 2:
     print("Choose a mission: ")
-    print("1 - Complete a run with only using daggers.")
-    print("2 - Complete a run without taking more than 100 damage.")
-    print("3 - Complete a run without opening more than 12 chests.")
-    print("4 - complete a run without using your extra slot.")
-    print("5 - complete a run without armor.")
+    if "1" not in mission_done:
+        print("1 - Complete a run with only using daggers.")
+    if "2" not in mission_done:
+        print("2 - Complete a run without taking more than 100 damage.")
+    if "3" not in mission_done:
+        print("3 - Complete a run without opening more than 12 chests.")
+    if "4" not in mission_done:
+        print("4 - complete a run without using your extra slot.")
+    if "5" not in mission_done:
+        print("5 - complete a run without armor.")
     mission_choice = input()
-    while mission_choice not in ["1", "2", "3", "4", "5"]:
-        print("Invalid choice. Please choose 1, 2, 3, 4, or 5.")
+    while mission_choice not in ["1", "2", "3", "4", "5"] or mission_choice in mission_done:
+        print("Invalid choice. Please choose a valid mission.")
         mission_choice = input()
 
 if Pclass == "pyromancer" or Pclass == "warrior":
