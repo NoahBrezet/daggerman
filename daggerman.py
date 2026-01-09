@@ -533,10 +533,12 @@ def run_completed():
     print(f"Congratulations, {username}! You have completed the run!")
     with open("playerinfo.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
-    if map.runscompleted < 3:
+    if map.runscompleted == 0:
         lines[line_num] = f"{username},{map.runscompleted+1}\n"
+    elif map.runscompleted < 3:
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass}\n"
     elif map.runscompleted == 3:
-        lines[line_num] = f"{username},{map.runscompleted+1},{mission_choice}\n"
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{mission_choice}\n"
     else:
         existing = list(mission_done)
         mc = globals().get("mission_choice")
@@ -544,9 +546,9 @@ def run_completed():
             existing.append(mc)
         if existing:
             missions_str = ",".join(existing)
-            lines[line_num] = f"{username},{map.runscompleted+1},{missions_str}\n"
+            lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{missions_str}\n"
         else:
-            lines[line_num] = f"{username},{map.runscompleted+1}\n"
+            lines[line_num] = f"{username},{map.runscompleted+1},{Pclass}\n"
     with open("playerinfo.txt", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
@@ -565,10 +567,12 @@ with open("playerinfo.txt", "r", encoding="utf-8") as f:
         parts = line.strip().split(",")
         if parts[0] == username:
             map.runscompleted = int(parts[1])
-            if map.runscompleted >= 3:
-                for n in range(2, len(parts)):
-                    if parts[n] != "":
-                        mission_done.append(parts[n])
+            if map.runscompleted >= 1:
+                Pclass = parts[2]
+                if map.runscompleted >= 3:
+                    for n in range(3, len(parts)):
+                        if parts[n] != "":
+                            mission_done.append(parts[n])
             print(f"Welcome back, {username}! You have completed {map.runscompleted} runs.")
             IsSaved = True
             break
@@ -589,7 +593,7 @@ if map.runscompleted == 0:
     print ("You can open chests by attacking them.")
     print ("Good luck!")
 
-if map.runscompleted > 0:
+if map.runscompleted == 1:
     print()
     print("As an adventurer you can switch between your extra slots and  your adventurer slot by pressing f.")
     print("You can't do special actions from your adventurer slot.")
