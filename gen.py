@@ -568,6 +568,17 @@ def wormboss(xc, yc, M, gen):
     else:
         central(xc, yc, "E", M, "□")
 
+def shop(xc, yc):
+    create_square(xc, yc, "$", 0)
+    create_square(xc, yc+1, "□", 0)
+    create_square(xc, yc-1, "□", 0)
+    create_square(xc, yc+2, "□", 3)
+    create_square(xc, yc-2, "□", 2)
+    create_square(xc+1, yc, "□", 0)
+    create_square(xc-1, yc, "□", 0)
+    create_square(xc+2, yc, "□", 4)
+    create_square(xc-2, yc, "□", 1)
+
 def gen(gen):
     map.genID[map.id.index("x")] = 0
     xnow = map.x[map.id.index("x")]
@@ -664,14 +675,20 @@ def gen(gen):
         elif room == 5:
             chest_ally(xcentre, ycentre, "L", gen)
         elif room == 6:
-            central(xcentre, ycentre, "F", "□", "□")
+            if map.runscompleted < 3:
+                central(xcentre, ycentre, "F", "□", "□")
+            else:
+                shop(xcentre, ycentre)
     elif map.lvl == 3:
         if room == 1:
             chestroom(xcentre, ycentre, "F", "F", gen)
         if room == 2:
             central(xcentre, ycentre, "T", "□", "□")
         if room == 3:
-            central(xcentre, ycentre, "□", "O", "□")
+            if map.runscompleted < 3:
+                central(xcentre, ycentre, "□", "O", "□")
+            else:
+                shop(xcentre, ycentre)
         if room == 4:
             emptyT(xcentre, ycentre)
         if room == 5:
@@ -693,7 +710,10 @@ def gen(gen):
         if room == 5:
             central(xcentre, ycentre, "□", "T", "□")
         if room == 6:
-            central(xcentre, ycentre, "O", "O", "O")
+            if map.runscompleted < 3:
+                central(xcentre, ycentre, "O", "O", "O")
+            else:
+                shop(xcentre, ycentre)
     elif map.lvl == 5:
         bosscave(xcentre, ycentre, "Ŧ", "T", gen)
     elif map.lvl == 6:
@@ -707,14 +727,20 @@ def gen(gen):
         if room == 3:
             chestroom(xcentre, ycentre, "Þ", "□", gen)
         if room == 4:
-            central(xcentre, ycentre, "B", "□", "□")
+            if map.runscompleted < 3:
+                central(xcentre, ycentre, "B", "□", "□")
+            else:
+                shop(xcentre, ycentre)
         if room == 5:
             central(xcentre, ycentre, "B", "B", "□")
         if room == 6:
             bosscave(xcentre, ycentre, "Þ", "T", gen)
     elif map.lvl == 7:
         if room == 1:
-            emptyT(xcentre, ycentre)
+            if map.runscompleted < 3:
+                emptyT(xcentre, ycentre)
+            else:
+                shop(xcentre, ycentre)
         if room == 2:
             chest_ally(xcentre, ycentre, "W", gen)
         if room == 3:
@@ -732,7 +758,10 @@ def gen(gen):
         wormboss(xcentre, ycentre, "W", gen)
     elif map.lvl == 9:
         if room == 1:
-            emptyT(xcentre, ycentre)
+            if map.runscompleted < 3:
+                emptyT(xcentre, ycentre)
+            else:
+                shop(xcentre, ycentre)
         if room == 2:
             chest_ally(xcentre, ycentre, "D", gen)
         if room == 3:

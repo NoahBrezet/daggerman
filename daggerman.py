@@ -20,6 +20,7 @@ spells_known = ["heal 2 magic scroll"]
 class_attack = 0
 mission_done = []
 mission_choice = ""
+shop = []
 
 total_damage_taken = 0  
 total_chests_opened = 0
@@ -145,7 +146,7 @@ def spell(spell_name):
             extra_defense = 0
 
 def attack(dx, dy):
-    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, wormHP, class_attack, total_damage_done, total_chests_opened
+    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, wormHP, class_attack, total_damage_done, total_chests_opened, exp
     k = map.id.index("x")
     target_x = map.x[k] + dx
     target_y = map.y[k] + dy
@@ -481,6 +482,72 @@ def attack(dx, dy):
                     return
                 print(f"You deal {attack_roll} damage!")
                 wormHP -= attack_roll
+            elif map.id[n] == "$":
+                action_taken = True
+                print("You enter the shop!")
+                print("What do you want to buy?")
+                if "1" in shop:
+                    print("1 - 25 exp - power ring (Damage, defense +1)")
+                if "2" in shop:
+                    print("2 - 50 exp - plate armor (Defense +3)")
+                if "3" in shop:
+                    print("3 - 150 exp - warriorssword (Damage 1d24)")
+                if "4" in shop:
+                    print("4 - 300 exp - shaking dash magic scroll (Allows you to move two times and weak monsters around you die)")
+                print(f"5 - {(map.lvl**2)*5} exp - health potion (Restores hp to max when used)")
+                print("6 - nothing")
+                choice = input()
+                while choice not in ["1", "2", "3", "4", "5"] or choice not in shop:
+                    if choice == "6":
+                        print("You leave the shop.")
+                        return
+                    print("Invalid choice. Please choose again.")
+                    choice = input()
+                if choice == "1" and "1" in shop:
+                    if exp >= 25:
+                        exp -= 25
+                        print("You bought the power ring!")
+                        if equip("e") == "y":
+                            extra_slot = "power ring 1"
+                            extra_damage = 1
+                            extra_defense = 1
+                    else:
+                        print("You don't have enough EXP!")
+                elif choice == "2" and "2" in shop:
+                    if exp >= 50:
+                        exp -= 50
+                        print("You bought the plate armor!")
+                        if equip("a") == "y":
+                            armor = "plate armor"
+                            armor_defense = 3
+                    else:
+                        print("You don't have enough EXP!")
+                elif choice == "3" and "3" in shop:
+                    if exp >= 150:
+                        exp -= 150
+                        print("You bought the warriorssword!")
+                        if equip("w") == "y":
+                            weapon = "warriorssword"
+                            weapon_damage = 24
+                    else:
+                        print("You don't have enough EXP!")
+                elif choice == "4" and "4" in shop:
+                    if exp >= 300:
+                        exp -= 300
+                        print("You bought the shaking dash magic scroll!")
+                        spell("shaking dash magic scroll")
+                    else:
+                        print("You don't have enough EXP!")
+                elif choice == "5" and "5" in shop:
+                    if exp >= map.lvl**2*5:
+                        exp -= map.lvl**2*5
+                        print("You bought the health potion!")
+                        if equip("e") == "y":
+                            extra_slot = "health potion"
+                            extra_damage = 0
+                            extra_defense = 0
+                    else:
+                        print("You don't have enough EXP!")
             elif map.id[n] != "□" and map.id[n] != "x":
                 action_taken = True
                 print(f"You attack the {map.id[n]}!")
@@ -538,17 +605,15 @@ def run_completed():
     elif map.runscompleted < 3:
         lines[line_num] = f"{username},{map.runscompleted+1},{Pclass}\n"
     elif map.runscompleted == 3:
-        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{mission_choice}\n"
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{mission_choice},{shop_choice}\n"
     else:
         existing = list(mission_done)
+        shop_save = list(shop)
         mc = globals().get("mission_choice")
         if mc and mc not in existing:
             existing.append(mc)
-        if existing:
-            missions_str = ",".join(existing)
-            lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{missions_str}\n"
-        else:
-            lines[line_num] = f"{username},{map.runscompleted+1},{Pclass}\n"
+        missions_str = ",".join(existing)
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{missions_str},{shop_save}\n"
     with open("playerinfo.txt", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
@@ -570,9 +635,14 @@ with open("playerinfo.txt", "r", encoding="utf-8") as f:
             if map.runscompleted >= 1:
                 Pclass = parts[2]
                 if map.runscompleted >= 3:
-                    for n in range(3, len(parts)):
+                    for n in range(3, map.runscompleted + 1):
                         if parts[n] != "":
                             mission_done.append(parts[n])
+                    for m in range(map.runscompleted + 1, len(parts)):
+                        if parts[m] != "":
+                            shop.append(parts[m])
+                    print(mission_done)
+                    print(shop)
             print(f"Welcome back, {username}! You have completed {map.runscompleted} runs.")
             IsSaved = True
             break
@@ -620,7 +690,7 @@ if map.runscompleted == 1:
 if map.runscompleted > 2:
     print("Choose a mission: ")
     if "1" not in mission_done:
-        print("1 - - complete a run without armor.")
+        print("1 - complete a run without armor.")
     if "2" not in mission_done:
         print("2 - Complete a run without taking more than 240 damage.")
     if "3" not in mission_done:
@@ -631,6 +701,23 @@ if map.runscompleted > 2:
     while mission_choice not in ["1", "2", "3", "4"] or mission_choice in mission_done:
         print("Invalid choice. Please choose a valid mission.")
         mission_choice = input()
+    
+    print("You need to attack the shop($) to enter it.")
+    print("What do you want in your shop?")
+    if "1" not in shop:
+        print("1 - 25 exp - power ring (Damage, defense +1)")
+    if "2" not in shop:
+        print("2 - 50 exp - plate armor (Defense +3)")
+    if "3" not in shop:
+        print("3 - 150 exp - warriorssword (Damage 1d24)")
+    if "4" not in shop:
+        print("4 - 300 exp - shaking dash magic scroll (Allows you to move two times and weak monsters around you die)")
+    shop_choice = input()
+    while shop_choice not in ["1", "2", "3", "4"] or shop_choice in shop:
+        print("Invalid choice. Please choose a valid shop item.")
+        shop_choice = input()
+    shop.append(shop_choice)
+
 
 if Pclass == "pyromancer" or Pclass == "warrior":
     class_attack = 1
