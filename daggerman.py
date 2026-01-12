@@ -636,10 +636,14 @@ with open("playerinfo.txt", "r", encoding="utf-8") as f:
             if map.runscompleted >= 1:
                 Pclass = parts[2]
                 if map.runscompleted >= 4:
-                    for n in range(3, map.runscompleted):
+                    if map.runscompleted > 7:
+                        m = 7
+                    else:
+                        m = map.runscompleted
+                    for n in range(3, m):
                         if parts[n] != "":
                             mission_done.append(parts[n])
-                    for m in range(map.runscompleted, len(parts)):
+                    for m in range(m, len(parts)):
                         if parts[m] != "":
                             shop.append(parts[m])
                     print(mission_done)
@@ -688,7 +692,7 @@ if map.runscompleted == 1:
         print("Invalid class. Please choose from: adventurer, roque, wizard, warrior, necromancer, pyromancer")
         Pclass = input()
 
-if map.runscompleted > 2:
+if map.runscompleted > 2 and map.runscompleted < 7:
     print("Choose a mission: ")
     if "1" not in mission_done:
         print("1 - complete a run without armor.")
@@ -718,6 +722,9 @@ if map.runscompleted > 2:
         print("Invalid choice. Please choose a valid shop item.")
         shop_choice = input()
     shop.append(shop_choice)
+
+if map.runscompleted >= 7:
+    print("You have completed all missions and shops available. Good luck on your normal run!")
 
 if Pclass == "pyromancer" or Pclass == "warrior":
     class_attack = 1
