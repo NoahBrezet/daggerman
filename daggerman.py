@@ -117,6 +117,8 @@ def monster_defeat(monsterID):
         run_completed()
         show_board()
         exit()
+    if powerup == "1":
+        hp += map.lvl
     exp += exp_gain
     map.id[map.MplaceID[monsterID]] = "□"
     map.Mhp.pop(monsterID)
@@ -152,6 +154,15 @@ def attack(dx, dy):
     target_y = map.y[k] + dy
     if Pclass == "roque":
         if weapon.endswith("dagger"):
+            if powerup == "4":
+                if map.lvl < 6:
+                    class_attack = 3
+                elif map.lvl < 9:
+                    class_attack = 4
+                else:
+                    class_attack = 5
+            else:
+                class_attack = 2
             class_attack = 2
         else:
             class_attack = 0
@@ -602,10 +613,12 @@ def run_completed():
         lines = f.readlines()
     if map.runscompleted == 0:
         lines[line_num] = f"{username},{map.runscompleted+1}\n"
-    elif map.runscompleted < 3:
+    elif map.runscompleted == 1:
         lines[line_num] = f"{username},{map.runscompleted+1},{Pclass}\n"
+    elif map.runscompleted == 2:
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{powerup}\n"
     elif map.runscompleted == 3:
-        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{mission_choice},{shop_choice}\n"
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{powerup},{mission_choice},{shop_choice}\n"
     else:
         existing = list(mission_done)
         shop_save = list(shop)
@@ -614,7 +627,7 @@ def run_completed():
             existing.append(mc)
         missions_str = ",".join(existing)
         shop_str = ",".join(shop_save)
-        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{missions_str},{shop_str}\n"
+        lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{powerup},{missions_str},{shop_str}\n"
     with open("playerinfo.txt", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
@@ -635,19 +648,19 @@ with open("playerinfo.txt", "r", encoding="utf-8") as f:
             map.runscompleted = int(parts[1])
             if map.runscompleted >= 1:
                 Pclass = parts[2]
-                if map.runscompleted >= 4:
-                    if map.runscompleted > 7:
-                        m = 7
-                    else:
-                        m = map.runscompleted
-                    for n in range(3, m):
-                        if parts[n] != "":
-                            mission_done.append(parts[n])
-                    for m in range(m, len(parts)):
-                        if parts[m] != "":
-                            shop.append(parts[m])
-                    print(mission_done)
-                    print(shop)
+                if map.runscompleted >= 3:
+                    powerup = parts[3]
+                    if map.runscompleted >= 4:
+                        if map.runscompleted > 7:
+                            m = 7
+                        else:
+                            m = map.runscompleted+1
+                        for n in range(4, m):
+                            if parts[n] != "":
+                                mission_done.append(parts[n])
+                        for m in range(m, len(parts)):
+                            if parts[m] != "":
+                                shop.append(parts[m])
             print(f"Welcome back, {username}! You have completed {map.runscompleted} runs.")
             IsSaved = True
             break
@@ -686,11 +699,25 @@ if map.runscompleted == 1:
     print("As a pyromancer you can burn stationary enemies with f.")
     print("You also do +1 fire damage.")
     print()
+    print("After you complete a run you will keep the class for your next runs.")
     print("What class do you want to be? (adventurer, roque, wizard, warrior, necromancer, pyromancer)")
     Pclass = input()
     while Pclass not in ["adventurer", "roque", "wizard", "warrior", "necromancer", "pyromancer"]:
         print("Invalid class. Please choose from: adventurer, roque, wizard, warrior, necromancer, pyromancer")
         Pclass = input()
+
+if map.runscompleted == 2:
+    print("Choose a power up for your next run: ")
+    print("1 - After defeating a monster you heal your level in hp.")
+    print("2 - You get your armor defense times five is added to your max hp.")
+    print("3 - Your extra damage is equal to your extra defense +1.")
+    print("4 - your damage is increased by 1 and 1 more after each boss.")
+    print("After you complete a run you will keep the power up for your next runs.")
+    print("Enter the number of your choice: ")
+    powerup = input()
+    while powerup not in ["1", "2", "3", "4"]:
+        print("Invalid choice. Please choose from: 1, 2, 3, 4")
+        powerup = input()
 
 if map.runscompleted > 2 and map.runscompleted < 7:
     print("Choose a mission: ")
@@ -817,28 +844,28 @@ while True:
         if map.lvl >= 2:
             print("level 2 monsters:")
             print(f"L - Lizardman (HP: {10+2*map.runscompleted}, Damage: 1d3, Defense: 1)") #exp 4
-            print(f"F - Freakish Abberation (HP: {6+map.runscompleted}, Damage: 1d6)") #exp 3
+            print(f"F - Freakish Abberation (HP: {6+map.runscompleted}, Damage: 1d{4+2*map.runscompleted})") #exp 3+runscompleted
             if map.lvl >= 3:
                 print("level 3 monsters:")
                 print(f"O - Orc (HP: {10+2*map.runscompleted}, Damage: 1d8, Defense: 2)") #exp 6
-                print(f"T - Troll (HP: {16+2*map.runscompleted}, Damage: 1d6, Defense: 3)") #exp 7
+                print(f"T - Troll (HP: {16+2*map.runscompleted}, Damage: 1d{6+2*map.runscompleted}, Defense: 3)") #exp 7+runscompleted
                 if map.lvl >= 4:
                     print("level 4 monsters:")
                     print(f"G - Golem (HP: {10+3*map.runscompleted}, Damage: 1d6, Defense: 4)") #exp 7
                     print(f"Ø - Ogre (HP: {20+2*map.runscompleted}, Damage: 1d10, Defense: 2)") #exp 12
                     if map.lvl >= 5:
                         print("level 5 monsters:")
-                        print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 0
+                        print(f"Ŧ - King troll (HP: {50+10*map.runscompleted}, Damage: 1d{12+2*map.runscompleted}, Defense: 4)") #exp 0
                         print(f"S - strong slime (HP: {2+map.runscompleted}, Damage: 1d6, Defense: {map.lvl})") #exp 12
                         if map.lvl >= 6:
                             print("level 6 monsters:")
                             print(f"B - Giant Beetle (HP: {10+2*map.runscompleted}, Damage: 1d10, Defense: 8)") #exp 16
-                            print(f"Þ - Troll riding Giant Beetle (HP: {26+4*map.runscompleted}, Damage: 1d12, Defense: 8)") #exp 30
-                            print(f"T - Strong Trolls (HP: {16+2*map.runscompleted}, Damage: 1d12, Defense: 4)") #exp 12
+                            print(f"Þ - Troll riding Giant Beetle (HP: {26+4*map.runscompleted}, Damage: 1d{10+2*map.runscompleted}, Defense: 8)") #exp 30+2*runscompleted
+                            print(f"T - Strong Trolls (HP: {16+2*map.runscompleted}, Damage: 1d{10+2*map.runscompleted}, Defense: 4)") #exp 12+2*runscompleted
                             if map.lvl >= 7:
                                 print("level 7 monsters:")
                                 print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8) can't move") #exp 20
-                                print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 6)") #exp 40
+                                print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d24, Defense: 6)") #exp 40
                                 if Pclass == "necromancer":
                                     print(f"Z - zombie slush (HP: 1, Damage: 1d8, Defense: 0)") #exp 50
                                 if map.lvl >= 8:
@@ -848,10 +875,10 @@ while True:
                                         print("level 9 monsters:")
                                         print(f"D - Demon (HP: {30+5*map.runscompleted}, Damage: 1d20, Defense: 10)") #exp 55
                                         print(f"H - Hellhound (HP: {20+5*map.runscompleted}, Damage: 1d24, Defense: 8)") #exp 40
-                                        print(f"P - Prickly demonic cactus (HP: {10+4*map.runscompleted}, Damage: 1d12, Defense: 15) can't move") #exp 25
+                                        print(f"P - Prickly demonic cactus (HP: {10+4*map.runscompleted}, Damage: 1d{8+2*map.runscompleted}, Defense: 15) can't move") #exp 20+2*runscompleted
                                         if map.lvl >= 10:
                                             print("level 10 monsters:")
-                                            print(f"Ω - Devil (HP: {100+20*map.runscompleted}, Damage: 1d30, Defense: 15)") #exp 0
+                                            print(f"Ω - Devil (HP: {100+20*map.runscompleted}, Damage: 1d{26+2*map.runscompleted}, Defense: 15)") #exp 0
     elif action == "aa":
         attack(-1, 0)
     elif action == "dd":
@@ -1162,7 +1189,7 @@ while True:
             if wormHP > 0:
                 if abs(map.x[map.wormplaceID[0]]-map.x[k]) + abs(map.y[map.MplaceID[m]]-map.y[k]) <= 2:
                     print(f"The purple worm attacks you!")
-                    monster_attack = roll(20) - (armor_defense + extra_defense)
+                    monster_attack = roll(24) - (armor_defense + extra_defense)
                     if monster_attack <= 0:
                         print("The monster's attack did no damage!")
                         continue
@@ -1203,20 +1230,36 @@ while True:
                     max_hp += 5
                     hp = max_hp
                     print(f"Your max HP increased to {max_hp}!")
-        if map.runscompleted > 2:
-            if mission_choice == "1":
-                if armor != "Nothing":
-                    print("You failed the mission by using armor!")
-                    exit()  
-            elif mission_choice == "2":
-                if total_damage_taken > 240:
-                    print("You failed the mission by taking more than 240 damage!")
-                    exit()
-            elif mission_choice == "3":
-                if total_chests_opened > 20:
-                    print("You failed the mission by opening more than 20 chests!")
-                    exit()
-            elif mission_choice == "4":
-                if extra_slot != "Nothing":
-                    print("You failed the mission by using your extra slot!")
-                    exit()
+        if map.runscompleted > 1:
+            if powerup == "2":
+                max_hp += (armor_defense + extra_defense + 1 + map.lvl) * 5
+            elif powerup == "3":
+                extra_damage = extra_defense +1
+            elif powerup == "4":
+                if map.lvl < 6:
+                    k = 1
+                elif map.lvl < 9:
+                    k = 2
+                else:
+                    k = 3
+                if Pclass == "warrior" or Pclass == "pyromancer":
+                    class_attack = 1 + k
+                else:
+                    class_attack = k
+            if map.runscompleted > 2:
+                if mission_choice == "1":
+                    if armor != "Nothing":
+                        print("You failed the mission by using armor!")
+                        exit()  
+                elif mission_choice == "2":
+                    if total_damage_taken > 240:
+                        print("You failed the mission by taking more than 240 damage!")
+                        exit()
+                elif mission_choice == "3":
+                    if total_chests_opened > 20:
+                        print("You failed the mission by opening more than 20 chests!")
+                        exit()
+                elif mission_choice == "4":
+                    if extra_slot != "Nothing":
+                        print("You failed the mission by using your extra slot!")
+                        exit()

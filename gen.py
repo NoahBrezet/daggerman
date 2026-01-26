@@ -34,26 +34,26 @@ def create_mon(new_id):
         elif new_id == "S":
             create_monster(2+map.runscompleted, 3, 0, 1, "S")
         elif new_id == "F":
-            create_monster(6+map.runscompleted, 6, 0, 3, "F")
+            create_monster(6+map.runscompleted, 4+2*map.runscompleted, 0, 3+map.runscompleted, "F")
         elif new_id == "L":
             create_monster(10+map.runscompleted*2, 3, 1, 4, "L")
         elif new_id == "O":
             create_monster(10+map.runscompleted*2, 8, 2, 6, "O")
         elif new_id == "T":
             if map.lvl < 6:
-                create_monster(16+map.runscompleted*2, 6, 3, 7, "T")
+                create_monster(16+map.runscompleted*2, 6+2*map.runscompleted, 3, 7+map.runscompleted, "T")
             else:
-                create_monster(16+map.runscompleted*2, 12, 4, 12, "T")
+                create_monster(16+map.runscompleted*2, 10+2*map.runscompleted, 4, 12+2*map.runscompleted, "T")
         elif new_id == "G":
             create_monster(10+map.runscompleted*3, 6, 4, 7, "G")
         elif new_id == "Ø":
             create_monster(20+map.runscompleted*2, 10, 2, 12, "Ø")
         elif new_id == "Ŧ":
-            create_monster(50+map.runscompleted*10, 12, 4, 0, "Ŧ")
+            create_monster(50+map.runscompleted*10, 12+2*map.runscompleted, 4, 0, "Ŧ")
         elif new_id == "B":
             create_monster(10+map.runscompleted*2, 10, 8, 16, "B")
         elif new_id == "Þ":
-            create_monster(26+map.runscompleted*4, 12, 8, 30, "Þ")
+            create_monster(26+map.runscompleted*4, 12+2*map.runscompleted, 8, 30+2*map.runscompleted, "Þ")
         elif new_id == "E":
             create_monster(10+map.runscompleted*2, 10, 12, 20, "E")
         elif new_id == "W":
@@ -63,9 +63,9 @@ def create_mon(new_id):
         elif new_id == "H":
             create_monster(20+map.runscompleted*5, 24, 8, 40, "H")
         elif new_id == "P":
-            create_monster(10+map.runscompleted*4, 12, 15, 25, "P")
+            create_monster(10+map.runscompleted*4, 12+2*map.runscompleted, 15, 25+2*map.runscompleted, "P")
         elif new_id == "Ω":
-            create_monster(100+map.runscompleted*20, 30, 15, 0, "Ω")
+            create_monster(100+map.runscompleted*20, 30+2*map.runscompleted, 15, 0, "Ω")
 
 def create_monster(new_hp, new_damage, new_defense, new_exp, new_id):
     map.Mhp.append(new_hp)
