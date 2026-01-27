@@ -25,6 +25,7 @@ mission_done = []
 mission_choice = ""
 shop = []
 powerup = "0"
+Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior, necromancer, pyromancer
 
 total_damage_taken = 0  
 total_chests_opened = 0
@@ -33,8 +34,6 @@ total_damage_done = 0
 wormHP = 50 + 10*map.runscompleted
 
 board_dict = {}
-
-Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior, necromancer, pyromancer
 
 def get_single_key():
     """Read a single key from user input without requiring Enter"""
@@ -690,7 +689,7 @@ if map.runscompleted == 0:
     print ("Or you can type W A S or D to attack in that direction.")
     print ("you can also type i to see your inventory and statts.")
     print ("You can type m to see every monster that you can currently fight.")
-    print ("You can type X to quit the game.")
+    print ("You can type P to quit the game.")
     print ("If you start a game without quitting the game will glitch.")
     print ("If you want the instructions again type h.")
     print ("Later you may get more options.")
@@ -827,7 +826,7 @@ while True:
         elif powerup == "4":
             print("Powerup: your damage is increased by 1 and 1 more after each boss.")
         print()
-    elif action == "X":
+    elif action == "P":
         break
     elif action == "a":
         move(-1, 0)
@@ -842,7 +841,7 @@ while True:
         print ("A S D or W to attack in that direction.")
         print ("i - see your inventory and statts.")
         print ("m - see monsters you can fight.")
-        print ("X - end the game.")
+        print ("P - end the game.")
         if extra_slot == "health potion":
             print ("r - restore hp to max.")
         if weapon == "swift dagger":
