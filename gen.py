@@ -55,7 +55,7 @@ def create_mon(new_id):
         elif new_id == "Þ":
             create_monster(26+map.runscompleted*4, 12+2*map.runscompleted, 8, 30+2*map.runscompleted, "Þ")
         elif new_id == "E":
-            create_monster(10+map.runscompleted*2, 10, 12, 20, "E")
+            create_monster(10+map.runscompleted*2, 8, 12, 20, "E")
         elif new_id == "W":
             create_monster(30+map.runscompleted*5, 20, 6, 40, "W")
         elif new_id == "D":
@@ -629,7 +629,7 @@ def gen(gen):
                     map.id[place] = "S"
                 elif map.lvl == 7 or map.lvl == 8:
                     map.Mhp.append(10+map.runscompleted*2)
-                    map.Mdamage.append(10)
+                    map.Mdamage.append(8)
                     map.Mdefense.append(12)
                     map.Mexp.append(20)
                     map.Mid.append("E")

@@ -2,6 +2,9 @@ import random
 import map
 import gen
 import os
+import sys
+import tty
+import termios
 
 # Player stats
 exp = 0
@@ -32,6 +35,17 @@ wormHP = 50 + 10*map.runscompleted
 board_dict = {}
 
 Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior, necromancer, pyromancer
+
+def get_single_key():
+    """Read a single key from user input without requiring Enter"""
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return ch
 
 def find_index_at(xc, yc):
     for i, (xx, yy) in enumerate(zip(map.x, map.y)):
@@ -93,7 +107,7 @@ def equip(itemType):
             print(f"Current armor: {armor} (Defense +{armor_defense})")
         elif itemType == "e":
             print(f"Current extra slot: {extra_slot}")
-        choice = input()
+        choice = get_single_key()
         if choice == "y" or choice == "n":
             return choice
 
@@ -673,11 +687,12 @@ if map.runscompleted == 0:
     print ("You are 'x'.")
     print ("Squares you can stand on are marked with '□'.")
     print ("After we ask you for your action you can type w a s or d to move.")
-    print ("Or you can type ww aa ss or dd to attack in that direction.")
+    print ("Or you can type W A S or D to attack in that direction.")
     print ("you can also type i to see your inventory and statts.")
     print ("You can type m to see every monster that you can currently fight.")
-    print ("You can type quit to end the game.")
-    print ("if you want the instructions again type h.")
+    print ("You can type X to quit the game.")
+    print ("If you start a game without quitting the game will glitch.")
+    print ("If you want the instructions again type h.")
     print ("Later you may get more options.")
     print ("You can open chests by attacking them.")
     print ("Good luck!")
@@ -702,10 +717,10 @@ if map.runscompleted == 1:
     print()
     print("After you complete a run you will keep the class for your next runs.")
     print("What class do you want to be? (adventurer, roque, wizard, warrior, necromancer, pyromancer)")
-    Pclass = input()
+    Pclass = get_single_key()
     while Pclass not in ["adventurer", "roque", "wizard", "warrior", "necromancer", "pyromancer"]:
         print("Invalid class. Please choose from: adventurer, roque, wizard, warrior, necromancer, pyromancer")
-        Pclass = input()
+        Pclass = get_single_key()
 
 if map.runscompleted == 2:
     print("Choose a power up for your next run: ")
@@ -715,10 +730,10 @@ if map.runscompleted == 2:
     print("4 - your damage is increased by 1 and 1 more after each boss.")
     print("After you complete a run you will keep the power up for your next runs.")
     print("Enter the number of your choice: ")
-    powerup = input()
+    powerup = get_single_key()
     while powerup not in ["1", "2", "3", "4"]:
         print("Invalid choice. Please choose from: 1, 2, 3, 4")
-        powerup = input()
+        powerup = get_single_key()
 
 if map.runscompleted > 2 and map.runscompleted < 7:
     print("Choose a mission: ")
@@ -730,10 +745,10 @@ if map.runscompleted > 2 and map.runscompleted < 7:
         print("3 - Complete a run without opening more than 20 chests.")
     if "4" not in mission_done:
         print("4 - complete a run without using your extra slot.")
-    mission_choice = input()
+    mission_choice = get_single_key()
     while mission_choice not in ["1", "2", "3", "4"] or mission_choice in mission_done:
         print("Invalid choice. Please choose a valid mission.")
-        mission_choice = input()
+        mission_choice = get_single_key()
     
     print("You need to attack the shop($) to enter it.")
     print("What do you want in your shop?")
@@ -745,10 +760,10 @@ if map.runscompleted > 2 and map.runscompleted < 7:
         print("3 - 150 exp - warriorssword (Damage 1d24)")
     if "4" not in shop:
         print("4 - 300 exp - shaking dash magic scroll (Allows you to move two times and weak monsters around you die)")
-    shop_choice = input()
+    shop_choice = get_single_key()
     while shop_choice not in ["1", "2", "3", "4"] or shop_choice in shop:
         print("Invalid choice. Please choose a valid shop item.")
-        shop_choice = input()
+        shop_choice = get_single_key()
     shop.append(shop_choice)
 
 if map.runscompleted >= 7:
@@ -764,7 +779,7 @@ while True:
     show_board()
     print()
     print("choose an action: ")
-    action = input()
+    action = get_single_key()
     if action == "i":
         print(f"HP: {hp}/{max_hp}, EXP: {exp}, Level: {map.lvl}, Exp to next level: {(map.lvl**2+map.lvl)/2 * 10 - exp}")
         print(f"Weapon: {weapon} (Damage: 1d{weapon_damage})")
@@ -803,8 +818,16 @@ while True:
             print("Mission: Complete a run without using your extra slot.")
         elif mission_choice == "5":
             print("Mission: Complete a run without armor.")
+        if powerup == "1":
+            print("Powerup: After defeating a monster you heal your level in hp.")
+        elif powerup == "2":
+            print("Powerup: You get your armor defense times five is added to your max hp.")
+        elif powerup == "3":
+            print("Powerup: Your extra damage is equal to your extra defense +1.")
+        elif powerup == "4":
+            print("Powerup: your damage is increased by 1 and 1 more after each boss.")
         print()
-    elif action == "quit":
+    elif action == "X":
         break
     elif action == "a":
         move(-1, 0)
@@ -816,9 +839,10 @@ while True:
         move(0, 1)
     elif action == "h":
         print ("w a s or d to move.")
-        print ("aa ss dd or ww to attack in that direction.")
+        print ("A S D or W to attack in that direction.")
         print ("i - see your inventory and statts.")
         print ("m - see monsters you can fight.")
+        print ("X - end the game.")
         if extra_slot == "health potion":
             print ("r - restore hp to max.")
         if weapon == "swift dagger":
@@ -836,7 +860,7 @@ while True:
         print ("quit - end the game.")
         print ("h - see this help message again.")
         print ("Later you may get more options.")
-        print ("You can open chests by attacking them.")
+        print ("You can open chests and shops by attacking them.")
         print ("Good luck!")
     elif action == "m":
         print("level 1 monsters:")
@@ -865,7 +889,7 @@ while True:
                             print(f"T - Strong Trolls (HP: {16+2*map.runscompleted}, Damage: 1d{10+2*map.runscompleted}, Defense: 4)") #exp 12+2*runscompleted
                             if map.lvl >= 7:
                                 print("level 7 monsters:")
-                                print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d16, Defense: 8) can't move") #exp 20
+                                print(f"E - purple worm egg (HP: {15+3*map.runscompleted}, Damage: 1d8, Defense: 8) can't move") #exp 20
                                 print(f"W - giant acid worm (HP: {30+5*map.runscompleted}, Damage: 1d24, Defense: 6)") #exp 40
                                 if Pclass == "necromancer":
                                     print(f"Z - zombie slush (HP: 1, Damage: 1d8, Defense: 0)") #exp 50
@@ -880,13 +904,13 @@ while True:
                                         if map.lvl >= 10:
                                             print("level 10 monsters:")
                                             print(f"Ω - Devil (HP: {100+20*map.runscompleted}, Damage: 1d{26+2*map.runscompleted}, Defense: 15)") #exp 0
-    elif action == "aa":
+    elif action == "A":
         attack(-1, 0)
-    elif action == "dd":
+    elif action == "D":
         attack(1, 0)
-    elif action == "ww":
+    elif action == "W":
         attack(0, -1)
-    elif action == "ss":
+    elif action == "S":
         attack(0, 1)
     elif action == "r":
         if extra_slot == "health potion":
@@ -902,7 +926,7 @@ while True:
             attack(0, 1)
         elif weapon == "dash dagger":
             print("You can move and attack after!")
-            move_input = input("Move (w/a/s/d): ")
+            move_input = get_single_key()
             if move_input == "a":
                 move(-1, 0)
             elif move_input == "d":
@@ -911,7 +935,7 @@ while True:
                 move(0, -1)
             elif move_input == "s":
                 move(0, 1)
-            attack_input = input("Attack (w/a/s/d):")
+            attack_input = get_single_key()
             if attack_input == "a":
                 attack(-1, 0)
             elif attack_input == "d":
@@ -928,7 +952,7 @@ while True:
                 print(f"{index} - {spell_name[0:-13]}")
                 index += 1
             save = extra_slot
-            spell_choice = input("Voer een getal in: ")
+            spell_choice = get_single_key()
             if spell_choice.isdigit() and int(spell_choice) < len(spells_known):
                 extra_slot = spells_known[int(spell_choice)]
             else:
@@ -953,7 +977,7 @@ while True:
             action_taken = True
         elif extra_slot == "dash magic scroll":
             print("You can move twice this turn!")
-            move_input1 = input("First move (w/a/s/d): ")
+            move_input1 = get_single_key()
             if move_input1 == "a":
                 move(-1, 0)
             elif move_input1 == "d":
@@ -963,7 +987,7 @@ while True:
             elif move_input1 == "s":
                 move(0, 1)
             show_board()
-            move_input2 = input("Second move (w/a/s/d): ")
+            move_input2 = get_single_key()
             if move_input2 == "a":
                 move(-1, 0)
             elif move_input2 == "d":
@@ -974,7 +998,7 @@ while True:
                 move(0, 1)
         elif extra_slot == "shaking dash magic scroll":
             print("You can move two times and weak monsters around you die!")
-            move_input1 = input("First move (w/a/s/d): ")
+            move_input1 = get_single_key()
             if move_input1 == "a":
                 move(-1, 0)
             elif move_input1 == "d":
@@ -984,7 +1008,7 @@ while True:
             elif move_input1 == "s":
                 move(0, 1)
             show_board()
-            move_input2 = input("Second move (w/a/s/d): ")
+            move_input2 = get_single_key()
             if move_input2 == "a":
                 move(-1, 0)
             elif move_input2 == "d":
@@ -1013,7 +1037,7 @@ while True:
             extra_damage = map.lvl+2
             print(f"You do 1d2+{extra_damage} damage.")
             print("In wich direction do you want to attack? (w/a/s/d)")
-            attack_input = input()
+            attack_input = get_single_key()
             if attack_input == "a":
                 attack(-1, 0)
                 attack(-2, 0)
@@ -1036,7 +1060,7 @@ while True:
                 extra_damage = extra_damage_save
         elif extra_slot == "kill magic scroll":
             print("In wich direction do you want to try to kill a monster? (w/a/s/d)")
-            attack_input = input()
+            attack_input = get_single_key()
             if attack_input == "a":
                 kill_magic(-1, 0, 12)
             if attack_input == "d":
@@ -1067,7 +1091,7 @@ while True:
     elif action == "f":
         if Pclass == "roque":
             print("You can move twice this turn!")
-            move_input1 = input("First move (w/a/s/d): ")
+            move_input1 = get_single_key()
             if move_input1 == "a":
                 move(-1, 0)
             elif move_input1 == "d":
@@ -1077,7 +1101,7 @@ while True:
             elif move_input1 == "s":
                 move(0, 1)
             show_board()
-            move_input2 = input("Second move (w/a/s/d): ")
+            move_input2 = get_single_key()
             if move_input2 == "a":
                 move(-1, 0)
             elif move_input2 == "d":
@@ -1098,7 +1122,7 @@ while True:
             adventurer_extra_defense = save
         elif Pclass == "necromancer":
             print("In wich direction do you want to suck life from a creature? (w/a/s/d)")
-            attack_input = input()
+            attack_input = get_single_key()
             if attack_input == "a":
                 kill_magic(-1, 0, 2*map.lvl)
             if attack_input == "d":
