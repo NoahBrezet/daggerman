@@ -1,0 +1,43 @@
+w,dagger,3
+a,leather armor,1
+e,attack ring 1,1,0,damage +1
+e,defense amulet 1,0,1,defense +1
+w,short sword,6
+a,chainmail armor,2
+s,magic missile magic scroll
+s,dash magic scroll
+w,swift dagger,4
+e,power ring 1,1,1,damage and defende +1
+s,heal 2 magic scroll
+e,health potion,0,0,restores hp to max when used
+w,longsword,8
+w,swift dagger,6
+e,attack ring 2,2,0,damage +2
+e,defense amulet 2,0,2,defense +2
+w,greatsword,12
+s,heal 4 magic scroll
+a,plate armor,3
+w,swift dagger,8
+w,dash dagger,8
+e,power ring 2,2,2,damage and defende +2
+s,dagger transmutation magic scroll
+w,giantssword,20
+w,warriorsword,24
+a,master armor,4
+w,swift dagger,16
+w,dash dagger,16
+e,power ring 3,3,3,damage and defende +3
+s,heal 8 magic scroll
+a,worm armor,5
+w,swift dagger,20
+w,dash dagger,20
+s,kill sphere magic scroll
+s,summon zombie slush magic scroll
+s,kill magic scroll
+w,warriorsword,30
+w,giantssword,24
+a,devilarmor,6
+w,swift dagger,24
+w,dash dagger,24
+e,power ring 4,4,4,damage and defende +4
+s,shaking dash magic scroll
