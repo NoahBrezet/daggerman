@@ -33,6 +33,7 @@ total_chests_opened = 0
 total_damage_done = 0
 
 wormHP = 50 + 10*map.runscompleted
+devil_turn = 0
 
 board_dict = {}
 
@@ -233,6 +234,8 @@ def attack(dx, dy):
                     elif treasure_roll <= 20:
                         get_item(1)
                     elif treasure_roll <= 30:
+                        if Pclass == "wizard":
+                            get_item(53)
                         get_item(2)
                     elif treasure_roll <= 40:
                         get_item(3)
@@ -308,11 +311,13 @@ def attack(dx, dy):
                         get_item(23)
                     elif treasure_roll <= 12:
                         get_item(25)
-                    elif treasure_roll <= 18:
+                    elif treasure_roll <= 15:
+                        get_item(44)
+                    elif treasure_roll <= 20:
                         get_item(26)
-                    elif treasure_roll <= 24:
+                    elif treasure_roll <= 25:
                         get_item(27)
-                    elif treasure_roll <= 28:
+                    elif treasure_roll <= 29:
                         get_item(28)
                     elif treasure_roll <= 33:
                         get_item(11)
@@ -333,7 +338,7 @@ def attack(dx, dy):
                     elif treasure_roll <= 12:
                         get_item(30)
                     elif treasure_roll <= 15:
-                        get_item(44)
+                        get_item(50)
                     elif treasure_roll <= 20:
                         get_item(31)
                     elif treasure_roll <= 25:
@@ -359,24 +364,28 @@ def attack(dx, dy):
                             get_item(37)
                     elif treasure_roll <= 12:
                         get_item(38)
-                    elif treasure_roll <= 18:
+                    elif treasure_roll <= 15:
+                        get_item(51)
+                    elif treasure_roll <= 20:
                         get_item(39)
-                    elif treasure_roll <= 24:
+                    elif treasure_roll <= 25:
                         if Pclass == "pyromancer":
                             get_item(48)
                         elif Pclass == "roque":
                             get_item(49)
                         else:
                             get_item(40)
-                    elif treasure_roll <= 28:
+                    elif treasure_roll <= 29:
                         get_item(41)
                     elif treasure_roll <= 33:
                         get_item(6)
                     elif treasure_roll <= 35:
                         get_item(42)
-                    elif treasure_roll <= 40:
+                    elif treasure_roll <= 37:
+                        get_item(52)
+                    elif treasure_roll <= 42:
                         get_item(33)
-                    elif treasure_roll <= 45:
+                    elif treasure_roll <= 46:
                         if Pclass == "necromancer":
                             get_item(34)
                         else:
@@ -1040,12 +1049,38 @@ while True:
                 map.id[map.MplaceID[m]] = "Z"
                 map.id[k] = "x"
                 continue
+            if map.Mid[m] == "Ω":
+                devil_turn += 1
+                if devil_turn == 1:
+                    print("hell's fire is taking you from beneeth and you take 2 dm!")
+                    total_damage_taken += 2
+                    hp -= 2
+                    print (f"Your HP is now {hp}/{max_hp}.")
+                elif devil_turn == 3:
+                    devil_turn = 0
+                    if abs(map.x[map.MplaceID[m]]-map.x[k]) + abs(map.y[map.MplaceID[m]]-map.y[k]) <= 3:
+                        print("The devil attacks you with his fire breath and you take 5 dm!")
+                        total_damage_taken += 5
+                        hp -= 5
+                        print (f"Your HP is now {hp}/{max_hp}.")
+                if hp <= 0:
+                    print("GAME OVER")
+                    show_board()
+                    exit()
             if abs(map.x[map.MplaceID[m]]-map.x[k]) + abs(map.y[map.MplaceID[m]]-map.y[k]) <= 1:
                 print(f"The {map.Mid[m]} attacks you!")
                 if Pclass == "warrior":
                     if roll(4) == 1:
                         print("You dodged the attack!")
                         continue
+                if armor == "thorn armor" or armor == "master thorn armor":
+                    map.Mhp[m] -= 3
+                    if map.Mhp[m] <= 0:
+                        print(f"The {map.Mid[m]} hurt itself on your thorn armor and died!")
+                        monster_defeat(m)
+                        continue
+                    else:
+                        print(f"The {map.Mid[m]} hurt itself on your thorn armor and took 3 damage!")
                 monster_attack = roll(map.Mdamage[m]) - (armor_defense + extra_defense + adventurer_extra_defense)
                 if monster_attack <= 0:
                     print("The monster's attack did no damage!")

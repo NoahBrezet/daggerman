@@ -36,7 +36,7 @@ s,summon zombie slush magic scroll
 s,kill magic scroll
 w,warriorsword,30
 w,giantssword,24
-a,devilarmor,6
+a,devil armor,6
 w,swift dagger,24
 w,dash dagger,24
 e,power ring 4,4,4,damage and defende +4
@@ -48,3 +48,7 @@ e,power shield,2,4,damage +2 and defense +4
 w,fire dagger,4
 w,hell's dagger,30
 w,glass dagger,30
+a,thorn armor,4
+a,master thorn armor,5
+e,devil shield,3,5,damage +3 and defense +5
+e,magic staff,2,0,boost normal and magic missile attacks by 2
