@@ -35,6 +35,8 @@ total_damage_done = 0
 wormHP = 50 + 10*map.runscompleted
 devil_turn = 0
 
+magic_missile_attack = False
+magic_missile_extra_damage = False
 board_dict = {}
 
 def get_single_key():
@@ -143,7 +145,7 @@ def monster_defeat(monsterID):
         print(f"Your max HP increased to {max_hp}!")
 
 def get_item(row):
-    global weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense
+    global weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, magic_missile_attack, magic_missile_extra_damage
     with open("item.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
         item_line = lines[row]
@@ -158,11 +160,12 @@ def get_item(row):
                 print(f"You found a {weapon_name}! (Damage 1d{weapon_dmg}, use q for dash attack)")
             else:
                 print(f"You found a {weapon_name}! (Damage 1d{weapon_dmg})")
-            if extra_damage == 2+map.lvl and weapon_damage == 2:
+            if magic_missile_attack == True:
                 print(f"Current weapon: {weapon} (Damage 1d{damage_save})")
             else:
                 print(f"Current weapon: {weapon} (Damage 1d{weapon_damage})")
             if equip() == "y":
+                magic_missile_attack = False
                 weapon = weapon_name
                 weapon_damage = weapon_dmg
         elif item_type == "a":
@@ -181,6 +184,7 @@ def get_item(row):
             print(f"You found a {extra_name}! ({effect})")
             print(f"Current extra slot: {extra_slot}")
             if equip() == "y":
+                magic_missile_extra_damage = False
                 extra_slot = extra_name
                 extra_damage = extra_dmg
                 extra_defense = extra_def
@@ -205,18 +209,14 @@ def attack(dx, dy):
     target_y = map.y[k] + dy
     if Pclass == "roque":
         if weapon.endswith("dagger"):
-            if powerup == "4":
-                if map.lvl < 6:
-                    class_attack = 3
-                elif map.lvl < 9:
-                    class_attack = 4
-                else:
-                    class_attack = 5
-            else:
-                class_attack = 2
             class_attack = 2
         else:
             class_attack = 0
+        if powerup == "4":
+            if map.lvl > 5:
+                class_attack += 1
+                if map.lvl > 8:
+                    class_attack += 1
     for n in range(len(map.id)):
         if map.x[n] == target_x and map.y[n] == target_y:
             if map.id[n] == "C":
@@ -915,8 +915,13 @@ while True:
         elif extra_slot == "magic missile magic scroll":
             extra_damage_save = extra_damage
             damage_save = weapon_damage
+            magic_missile_attack = True
+            magic_missile_extra_damage = True
             weapon_damage = 2
-            extra_damage = map.lvl+2
+            if extra_slot == "magic staff":
+                extra_damage = map.lvl+4
+            else:
+                extra_damage = map.lvl+2
             print(f"You do 1d2+{extra_damage} damage.")
             print("In wich direction do you want to attack? (w/a/s/d)")
             attack_input = get_single_key()
@@ -936,10 +941,12 @@ while True:
                 attack(0, 1)
                 attack(0, 2)
                 attack(0, 3)
-            if weapon_damage == 2:
+            if magic_missile_attack == True:
                 weapon_damage = damage_save
-            if extra_damage == map.lvl+2:
+                magic_missile_attack = False
+            if magic_missile_extra_damage == True:
                 extra_damage = extra_damage_save
+                magic_missile_extra_damage = False
         elif extra_slot == "kill magic scroll":
             print("You can kill one creature with 12 hp or less left.")
             print("In wich direction do you want to try to kill a monster? (w/a/s/d)")
