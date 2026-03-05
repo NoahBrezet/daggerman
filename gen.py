@@ -434,7 +434,7 @@ def bosscave(xc, yc, MBoss, M, gen):
         if gen == 1 or gen == 2:
             emptyT(xc,yc)
         else:
-            emptyT(xc2,yc)
+            emptyT(xc2,yc2)
 
 def wormboss(xc, yc, M, gen):
     if gen == 1:

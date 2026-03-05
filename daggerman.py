@@ -25,6 +25,7 @@ mission_choice = ""
 shop = []
 powerup = "0"
 Pclass = "None"  # Possible classes: adventurer, roque, wizard, warrior, necromancer, pyromancer
+points = 1000
 
 total_damage_taken = 0  
 total_chests_opened = 0
@@ -107,9 +108,10 @@ def equip():
             return choice
 
 def monster_defeat(monsterID):
-    global hp, max_hp, weapon, weapon_damage, exp
+    global hp, max_hp, weapon, weapon_damage, exp, points
     print(f"You defeated the {map.id[map.MplaceID[monsterID]]}!")
     exp_gain = map.Mexp[monsterID]
+    points += 20
     print(f"You gain {exp_gain} EXP!")
     if map.lvl == 5 and map.id[map.MplaceID[monsterID]] == "Ŧ":
         map.lvl = 6
@@ -204,7 +206,7 @@ def get_item(row):
                     extra_defense = 0
 
 def attack(dx, dy):
-    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, wormHP, class_attack, total_damage_done, total_chests_opened, exp
+    global action_taken, weapon, weapon_damage, armor, armor_defense, extra_slot, extra_damage, extra_defense, wormHP, class_attack, total_damage_done, total_chests_opened, exp, points
     k = map.id.index("x")
     target_x = map.x[k] + dx
     target_y = map.y[k] + dy
@@ -398,10 +400,11 @@ def attack(dx, dy):
                 action_taken = True
                 print(f"You attack the purple worm!")
                 attack_roll = roll(weapon_damage) + extra_damage + class_attack - 12
-                total_damage_done += attack_roll
                 if attack_roll <= 0:
                     print("Your attack did no damage!")
                     return
+                total_damage_done += attack_roll
+                points += 2*attack_roll
                 print(f"You deal {attack_roll} damage!")
                 wormHP -= attack_roll
             elif map.id[n] == "$":
@@ -467,11 +470,12 @@ def attack(dx, dy):
                 if monster_index is None:
                     return
                 attack_roll = roll(weapon_damage) + extra_damage + class_attack - map.Mdefense[monster_index]
-                total_damage_done += attack_roll
                 if attack_roll <= 0:
                     print("Your attack did no damage!")
                     return
                 print(f"You deal {attack_roll} damage!")
+                total_damage_done += attack_roll
+                points += 2*attack_roll
                 map.Mhp[monster_index] -= attack_roll
                 if map.Mhp[monster_index] <= 0:
                     monster_defeat(monster_index)
@@ -530,6 +534,15 @@ def run_completed():
         shop_str = ",".join(shop_save)
         lines[line_num] = f"{username},{map.runscompleted+1},{Pclass},{powerup},{missions_str},{shop_str}\n"
     with open("playerinfo.txt", "w", encoding="utf-8") as f:
+        f.writelines(lines)
+    with open("scoreboard.txt", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        for i in range(4):
+            parts = lines[i].strip().split(",")
+            if points > int(parts[0]):
+                lines[i] = f"{points},{username}\n"
+                break
+    with open("scoreboard.txt", "w", encoding="utf-8") as f:
         f.writelines(lines)
 
 gen.start()
@@ -691,6 +704,7 @@ while True:
         elif Pclass == "pyromancer":
             print("As a pyromancer you can burn stationary enemies with f.")
             print("You also do +1 fire damage.")
+        print(f"Points: {points}")
         print(f"Total damage taken: {total_damage_taken}")
         print(f"Total damage done: {total_damage_done}")
         print(f"Total chests opened: {total_chests_opened}")
@@ -741,9 +755,13 @@ while True:
             print ("f - suck life from almost dead creatures")
         if Pclass == "pyromancer":
             print ("f - burn stationary enemies around you")
-        print ("quit - end the game.")
+        print ("1 - scoreboard")
+        print ("P - end the game.")
         print ("h - see this help message again.")
         print ("Later you may get more options.")
+        print ("You start with 1000 points.")
+        print ("You lose points for each action, each damage taken and each magic missle used.")
+        print ("You gain 2 points for each damage done and 20 points for each monster defeated.")
         print ("You can open chests and shops by attacking them.")
         print ("Good luck!")
     elif action == "m":
@@ -843,20 +861,14 @@ while True:
                 print("Not a valid number!")
         if extra_slot == "heal 2 magic scroll":
             hp += 2
-            if hp > max_hp:
-                hp = max_hp
             print("You cast the heal spell and restored 2 HP!")
             action_taken = True
         elif extra_slot == "heal 4 magic scroll":
             hp += 4
-            if hp > max_hp:
-                hp = max_hp
             print("You cast the heal spell and restored 4 HP!")
             action_taken = True
         elif extra_slot == "heal 8 magic scroll":
             hp += 8
-            if hp > max_hp:
-                hp = max_hp
             print("You cast the heal spell and restored 8 HP!")
             action_taken = True
         elif extra_slot == "dash magic scroll":
@@ -919,6 +931,7 @@ while True:
             magic_missile_attack = True
             magic_missile_extra_damage = True
             weapon_damage = 2
+            points -= 1
             if extra_slot == "magic staff":
                 extra_damage = map.lvl+4
             else:
@@ -1017,15 +1030,16 @@ while True:
         elif Pclass == "necromancer":
             print("In wich direction do you want to suck life from a creature? (w/a/s/d)")
             attack_input = get_single_key()
+            save_amount_monster = len(map.Mid)
             if attack_input == "a":
-                kill_magic(-1, 0, 2*map.lvl)
+                kill_magic(-1, 0, 2*map.lvl+extra_damage)
             if attack_input == "d":
-                kill_magic(1, 0, 2*map.lvl)
+                kill_magic(1, 0, 2*map.lvl+extra_damage)
             if attack_input == "w":
-                kill_magic(0, -1, 2*map.lvl)
+                kill_magic(0, -1, 2*map.lvl+extra_damage)
             if attack_input == "s":
-                kill_magic(0, 1, 2*map.lvl)
-            if action_taken:
+                kill_magic(0, 1, 2*map.lvl+extra_damage)
+            if len(map.Mid) < save_amount_monster:
                 hp += map.lvl
                 if hp > max_hp:
                     hp = max_hp
@@ -1040,7 +1054,15 @@ while True:
                         monster_index = next((m for m in range(len(map.MplaceID)) if map.MplaceID[m] == n), None)
                         if monster_index is not None:
                             monster_defeat(monster_index)
+    elif action == "1":
+        with open("scoreboard.txt", "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            print("Scoreboard:")
+            for line in lines:
+                parts = line.strip().split(",")
+                print(f"{parts[1]}: {parts[0]} points")
     if action_taken:
+        points -= 1
         k = map.id.index("x")
         m = -1
         while m+1 < len (map.MplaceID):
@@ -1065,6 +1087,7 @@ while True:
                         print("The devil attacks you with his fire breath and you take 5 dm!")
                         total_damage_taken += 5
                         hp -= 5
+                        points -= 5
                         print (f"Your HP is now {hp}/{max_hp}.")
                 if hp <= 0:
                     print("GAME OVER")
@@ -1089,6 +1112,7 @@ while True:
                     print("The monster's attack did no damage!")
                     continue
                 total_damage_taken += monster_attack
+                points -= monster_attack
                 print(f"The {map.Mid[m]} deals {monster_attack} damage!")
                 hp -= monster_attack
                 print (f"Your HP is now {hp}/{max_hp}.")
@@ -1134,6 +1158,7 @@ while True:
                         continue
                     total_damage_taken += monster_attack
                     print(f"The purple worm deals {monster_attack} damage!")
+                    points -= monster_attack
                     hp -= monster_attack
                     print (f"Your HP is now {hp}/{max_hp}.")
                     if hp <= 0:
